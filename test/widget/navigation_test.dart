@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:jobtrack_desktop/app/app.dart';
 import 'package:jobtrack_desktop/features/applications/repositories/application_repository.dart';
+import 'package:jobtrack_desktop/features/settings/repositories/settings_repository.dart';
 import 'package:jobtrack_desktop/features/applications/viewmodels/applications_controller.dart';
 import 'package:jobtrack_desktop/features/applications/views/applications_page.dart';
 import 'package:jobtrack_desktop/features/dashboard/viewmodels/dashboard_controller.dart';
@@ -13,6 +14,7 @@ import 'package:jobtrack_desktop/features/settings/viewmodels/settings_controlle
 import 'package:jobtrack_desktop/features/settings/views/settings_page.dart';
 
 import '../support/fake_application_repository.dart';
+import '../support/fake_settings_repository.dart';
 
 int _selectedRailIndex(WidgetTester tester) =>
     tester.widget<NavigationRail>(find.byType(NavigationRail)).selectedIndex!;
@@ -20,6 +22,7 @@ int _selectedRailIndex(WidgetTester tester) =>
 void main() {
   setUp(() {
     Get.put<ApplicationRepository>(FakeApplicationRepository());
+    Get.put<SettingsRepository>(FakeSettingsRepository());
   });
   tearDown(Get.reset);
 

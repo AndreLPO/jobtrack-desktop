@@ -11,7 +11,7 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 | 2 ✅ | **Persistência** | Repositórios de candidaturas e de configurações (interface + implementação Hive); mapeamento com `schemaVersion`; falhas tipadas; testes de CRUD, de reabertura de boxes e de exclusão. | — |
 | 3 ✅ | **Candidaturas: listagem + formulário** | Cadastrar, editar e listar, com aviso de duplicidade; estados vazio, erro e carregando; exclusão com confirmação. | — |
 | 4 ✅ | **Detalhes** | Histórico de status, alterar status, registrar contato, descrição da vaga. | — |
-| 5  | **Busca, filtros e ordenação** | RF-04, exceto o filtro de acompanhamento. | — |
+| 5 ✅ | **Busca, filtros e ordenação** | RF-04 completo (busca sem acento, status, canal, período, "precisam de acompanhamento", 3 ordenações). | — |
 | 6  | **Configurações** | Prazo e limite de tentativas. | — |
 | 7  | **Acompanhamentos** | Seções "Vencidos" e "Sugerido encerrar"; indicador e filtro na listagem; registrar contato, adiar, encerrar sem resposta. | — |
 | 7b | **Modelo de mensagem** | Texto pronto para copiar com os dados da candidatura (D-27). Requer spec própria. | D-50 |

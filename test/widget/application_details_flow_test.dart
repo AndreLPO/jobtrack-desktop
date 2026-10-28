@@ -7,12 +7,14 @@ import 'package:jobtrack_desktop/core/formatting/date_format.dart';
 import 'package:jobtrack_desktop/core/time/local_date.dart';
 import 'package:jobtrack_desktop/features/applications/models/application_status.dart';
 import 'package:jobtrack_desktop/features/applications/repositories/application_repository.dart';
+import 'package:jobtrack_desktop/features/settings/repositories/settings_repository.dart';
 import 'package:jobtrack_desktop/features/applications/views/application_details_page.dart';
 import 'package:jobtrack_desktop/features/applications/views/applications_page.dart';
 import 'package:jobtrack_desktop/features/applications/views/status_badge.dart';
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
+import '../support/fake_settings_repository.dart';
 
 void main() {
   late FakeApplicationRepository repository;
@@ -22,6 +24,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     Get.put<ApplicationRepository>(repository);
+    Get.put<SettingsRepository>(FakeSettingsRepository());
     await tester.pumpWidget(
       const JobTrackApp(initialRoute: AppRoutes.applications),
     );

@@ -193,6 +193,33 @@ adotado pelo usuário como base para novas regras e campos.
   altera a data manual de próximo acompanhamento. O histórico de status
   é imutável.
 
+### Etapas 5 a 9 (2026-10-28, autorização para executar em sequência)
+
+- **D-56 — Busca:** ignora maiúsculas, minúsculas e acentos ("sao
+  paulo" encontra "São Paulo").
+- **D-50 — Modelo de mensagem:** texto editável nas Configurações, com
+  padrão em pt-BR e as variáveis `{empresa}`, `{vaga}`, `{data}` e
+  `{contato}`. Os dados pessoais (nome, LinkedIn, stack) o usuário
+  escreve uma única vez no próprio modelo, então não há "perfil".
+  Nada é enviado: a mensagem só é copiada.
+- **D-57 — Dashboard:** indicador extra "Sugerido encerrar", e
+  indicadores clicáveis quando existe um destino equivalente: semana →
+  listagem filtrada pelo período; pendentes e sugerido encerrar →
+  Acompanhamentos; linha do resumo por status → listagem filtrada pelo
+  status.
+- **D-58 — Link da vaga:** botão "Abrir" no navegador com o pacote
+  `url_launcher`, além de "Copiar".
+- **D-59 — Decisões de implementação, seguindo padrões já aprovados:**
+  - Configurações também perguntam antes de descartar alterações
+    (como D-52).
+  - O caminho da pasta de dados aparece nas Configurações (D-43).
+  - O Dashboard continua como página inicial.
+  - O filtro "só precisam de acompanhamento" inclui vencidas e
+    "sugerido encerrar".
+  - Ordenar por próximo acompanhamento põe as datas mais próximas
+    primeiro e as candidaturas sem data no fim.
+  - `{contato}` vazio vira "equipe de recrutamento".
+
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
   recebida e não existe contato posterior, a base é a data da mudança
@@ -235,17 +262,6 @@ adotado pelo usuário como base para novas regras e campos.
 - **Status:** Pendente (N; tokens provisórios na Etapa 0)
 - **Recomendação:** tokens neutros, fonte do sistema e uma cor de
   destaque. Ajustar depois.
-
-### D-50 — Conteúdo do modelo de mensagem
-- **Status:** Pendente (B: Etapa 7b)
-- **Perguntas:**
-  - O modelo do material está em inglês. Ele será fixo, em pt-BR,
-    bilíngue ou editável nas Configurações?
-  - Os campos "anos de experiência", "stack", "conquista", "seu nome"
-    e "LinkedIn" pertencem ao usuário e não à candidatura. Para
-    preenchê-los automaticamente, seria preciso um "perfil" nas
-    Configurações; a alternativa é deixá-los como marcadores para
-    editar depois de copiar.
 
 ---
 

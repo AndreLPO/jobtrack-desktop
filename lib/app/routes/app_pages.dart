@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../features/applications/models/application_query.dart';
 import '../../features/applications/viewmodels/application_details_controller.dart';
 import '../../features/applications/viewmodels/application_form_controller.dart';
 import '../../features/applications/viewmodels/applications_controller.dart';
@@ -29,7 +30,16 @@ abstract final class AppPages {
     GetPage(
       name: AppRoutes.applications,
       page: () => const ApplicationsPage(),
-      binding: BindingsBuilder.put(() => ApplicationsController(Get.find())),
+      // O Dashboard abre a listagem já filtrada (D-57).
+      binding: BindingsBuilder.put(
+        () => ApplicationsController(
+          Get.find(),
+          Get.find(),
+          initialFilter: Get.arguments is ApplicationFilter
+              ? Get.arguments as ApplicationFilter
+              : const ApplicationFilter(),
+        ),
+      ),
     ),
     GetPage(
       name: AppRoutes.newApplication,

@@ -1,17 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jobtrack_desktop/features/applications/models/application_query.dart';
 import 'package:jobtrack_desktop/features/applications/viewmodels/applications_controller.dart';
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
+import '../support/fake_settings_repository.dart';
 import '../unit/applications/fixtures.dart';
 
 void main() {
   late FakeApplicationRepository repository;
+  late FakeSettingsRepository settings;
   late ApplicationsController controller;
 
   setUp(() {
     repository = FakeApplicationRepository();
-    controller = ApplicationsController(repository);
+    settings = FakeSettingsRepository();
+    controller = ApplicationsController(
+      repository,
+      settings,
+      clock: () => DateTime(2026, 10, 28, 12),
+    );
   });
 
   test('começa carregando', () {
@@ -35,7 +43,7 @@ void main() {
       await controller.load();
 
       expect(controller.status.value, ListStatus.ready);
-      expect(controller.applications.map((a) => a.id), ['new', 'mid', 'old']);
+      expect(controller.visible.map((a) => a.id), ['new', 'mid', 'old']);
     },
   );
 
@@ -70,6 +78,52 @@ void main() {
       expect(controller.unreadableCount.value, 2);
     },
   );
+
+  test('falha ao ler configurações também vira erro', () async {
+    settings.failReads = true;
+    await controller.load();
+    expect(controller.status.value, ListStatus.error);
+  });
+
+  test('filtro e ordenação mudam só a lista visível', () async {
+    repository.store['a'] = buildApplication(
+      id: 'a',
+      companyName: 'São Paulo Tech',
+      applicationDate: dateOf(10, 1),
+    );
+    repository.store['b'] = buildApplication(
+      id: 'b',
+      companyName: 'Acme',
+      applicationDate: dateOf(10, 20),
+    );
+    await controller.load();
+
+    controller.setFilter(const ApplicationFilter(text: 'sao'));
+    expect(controller.visible.map((a) => a.id), ['a']);
+    expect(controller.applications, hasLength(2));
+
+    controller.clearFilters();
+    expect(controller.filter.value.isEmpty, isTrue);
+    expect(controller.visible, hasLength(2));
+  });
+
+  test('filtro inicial vindo do Dashboard (D-57)', () async {
+    repository.store['a'] = buildApplication(
+      id: 'a',
+      applicationDate: dateOf(10, 1),
+    );
+    repository.store['b'] = buildApplication(
+      id: 'b',
+      applicationDate: dateOf(10, 27),
+    );
+    final filtered = ApplicationsController(
+      repository,
+      settings,
+      initialFilter: ApplicationFilter(from: dateOf(10, 26), to: dateOf(11, 1)),
+    );
+    await filtered.load();
+    expect(filtered.visible.map((a) => a.id), ['b']);
+  });
 
   test('excluir remove da lista após gravar', () async {
     repository.store['a'] = minimalApplication(id: 'a');

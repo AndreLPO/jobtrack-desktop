@@ -6,6 +6,7 @@ import 'package:jobtrack_desktop/app/routes/app_routes.dart';
 import 'package:jobtrack_desktop/core/formatting/date_format.dart';
 import 'package:jobtrack_desktop/features/applications/models/application_status.dart';
 import 'package:jobtrack_desktop/features/applications/repositories/application_repository.dart';
+import 'package:jobtrack_desktop/features/settings/repositories/settings_repository.dart';
 import 'package:jobtrack_desktop/features/applications/viewmodels/application_form_controller.dart';
 import 'package:jobtrack_desktop/features/applications/views/application_form_page.dart';
 import 'package:jobtrack_desktop/features/applications/views/applications_page.dart';
@@ -13,6 +14,7 @@ import 'package:jobtrack_desktop/features/applications/views/status_badge.dart';
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
+import '../support/fake_settings_repository.dart';
 
 void main() {
   late FakeApplicationRepository repository;
@@ -22,6 +24,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     Get.put<ApplicationRepository>(repository);
+    Get.put<SettingsRepository>(FakeSettingsRepository());
     await tester.pumpWidget(
       const JobTrackApp(initialRoute: AppRoutes.applications),
     );
@@ -97,6 +100,100 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Globex'), findsOneWidget);
+    });
+  });
+
+  group('busca e filtros (Etapa 5)', () {
+    setUp(() {
+      repository.store['a'] = minimalApplication(
+        id: 'a',
+        companyName: 'São Paulo Tech',
+      );
+      repository.store['b'] = fullApplication(id: 'b');
+    });
+
+    testWidgets('busca sem acento filtra e "Limpar filtros" restaura', (
+      tester,
+    ) async {
+      await pumpList(tester);
+      expect(find.text('2 candidaturas'), findsOneWidget);
+
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Buscar empresa ou vaga'),
+        'sao paulo',
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('São Paulo Tech'), findsOneWidget);
+      expect(find.text('Acme'), findsNothing);
+      expect(find.text('1 de 2 candidaturas'), findsOneWidget);
+
+      await tester.tap(find.text('Limpar filtros'));
+      await tester.pumpAndSettle();
+      expect(find.text('Acme'), findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(
+              find.widgetWithText(TextField, 'Buscar empresa ou vaga'),
+            )
+            .controller!
+            .text,
+        isEmpty,
+      );
+    });
+
+    testWidgets('menu de status filtra e mostra a quantidade', (tester) async {
+      await pumpList(tester);
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Status'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(CheckboxMenuButton, 'Entrevista'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Status (1)'), findsOneWidget);
+      await tester.tapAt(const Offset(5, 5));
+      await tester.pumpAndSettle();
+      expect(find.text('Acme'), findsOneWidget);
+      expect(find.text('São Paulo Tech'), findsNothing);
+    });
+
+    testWidgets('filtro sem resultado mostra estado próprio', (tester) async {
+      await pumpList(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Buscar empresa ou vaga'),
+        'inexistente',
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Nenhuma candidatura corresponde aos filtros.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('período recusa início depois do fim', (tester) async {
+      await pumpList(tester);
+      await tester.tap(find.text('Período'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.widgetWithText(TextField, 'De'),
+        '10/10/2026',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Até'),
+        '01/10/2026',
+      );
+      await tester.tap(find.text('Aplicar'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('A data inicial deve ser anterior à final.'),
+        findsOneWidget,
+      );
+
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Até'),
+        '31/10/2026',
+      );
+      await tester.tap(find.text('Aplicar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Período: 10/10/2026 a 31/10/2026'), findsOneWidget);
     });
   });
 

@@ -11,6 +11,7 @@ import '../../../core/widgets/state_views.dart';
 import '../models/application.dart';
 import '../viewmodels/applications_controller.dart';
 import 'application_details_page.dart';
+import 'applications_toolbar.dart';
 import 'labels.dart';
 import 'status_badge.dart';
 
@@ -92,6 +93,7 @@ class ApplicationsPage extends GetView<ApplicationsController> {
   Widget _buildReady(BuildContext context) {
     final applications = controller.applications;
     final unreadable = controller.unreadableCount.value;
+    final visible = controller.visible;
     if (applications.isEmpty && unreadable == 0) {
       return MessageView(
         title: 'Nenhuma candidatura cadastrada.',
@@ -115,15 +117,71 @@ class ApplicationsPage extends GetView<ApplicationsController> {
           ),
           const SizedBox(height: AppSpacing.md),
         ],
-        Expanded(
-          child: _ApplicationsTable(
-            applications: applications,
-            onOpen: (a) => _openDetails(context, a),
-            onEdit: (a) =>
-                _openForm(context, AppRoutes.editApplicationPath(a.id)),
-            onDelete: (a) => _delete(context, a),
-          ),
+        ApplicationsToolbar(
+          filter: controller.filter.value,
+          sort: controller.sort.value,
+          onFilterChanged: controller.setFilter,
+          onSortChanged: controller.setSort,
         ),
+        const SizedBox(height: AppSpacing.md),
+        _ResultSummary(
+          shown: visible.length,
+          total: applications.length,
+          filtered: !controller.filter.value.isEmpty,
+          onClear: controller.clearFilters,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Expanded(
+          child: visible.isEmpty
+              ? MessageView(
+                  title: 'Nenhuma candidatura corresponde aos filtros.',
+                  actionLabel: 'Limpar filtros',
+                  onAction: controller.clearFilters,
+                )
+              : _ApplicationsTable(
+                  applications: visible,
+                  onOpen: (a) => _openDetails(context, a),
+                  onEdit: (a) =>
+                      _openForm(context, AppRoutes.editApplicationPath(a.id)),
+                  onDelete: (a) => _delete(context, a),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ResultSummary extends StatelessWidget {
+  const _ResultSummary({
+    required this.shown,
+    required this.total,
+    required this.filtered,
+    required this.onClear,
+  });
+
+  final int shown;
+  final int total;
+  final bool filtered;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = filtered
+        ? '$shown de $total candidaturas'
+        : total == 1
+        ? '1 candidatura'
+        : '$total candidaturas';
+    return Row(
+      children: [
+        Text(
+          text,
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: AppColors.textSecondary),
+        ),
+        if (filtered) ...[
+          const SizedBox(width: AppSpacing.sm),
+          TextButton(onPressed: onClear, child: const Text('Limpar filtros')),
+        ],
       ],
     );
   }
