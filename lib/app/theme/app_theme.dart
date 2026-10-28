@@ -103,6 +103,16 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(shape: smallShape),
       ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.feedback,
+        contentTextStyle: const TextStyle(color: AppColors.onFeedback),
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        width: 480,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+      ),
     );
   }
 }

@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_localizations:
+    sdk: flutter
   get: ^4.7.3
   hive_ce: ^2.22.0
   path_provider: ^2.1.6

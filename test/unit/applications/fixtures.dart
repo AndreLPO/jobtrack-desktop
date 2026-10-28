@@ -11,6 +11,9 @@ var _sequence = 0;
 
 String nextId() => 'id-${_sequence++}';
 
+/// Data em 2026, para testes curtos.
+LocalDate dateOf(int month, int day) => LocalDate(2026, month, day);
+
 /// Meio-dia local do dia, para não depender de limites de fuso.
 DateTime atNoon(LocalDate date) =>
     DateTime(date.year, date.month, date.day, 12);

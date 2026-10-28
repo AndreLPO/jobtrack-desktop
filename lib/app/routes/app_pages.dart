@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
+import '../../features/applications/viewmodels/application_form_controller.dart';
 import '../../features/applications/viewmodels/applications_controller.dart';
+import '../../features/applications/views/application_form_page.dart';
 import '../../features/applications/views/applications_page.dart';
 import '../../features/dashboard/viewmodels/dashboard_controller.dart';
 import '../../features/dashboard/views/dashboard_page.dart';
@@ -11,8 +13,8 @@ import '../../features/settings/views/settings_page.dart';
 import 'app_routes.dart';
 
 /// Cada página registra o próprio controller na rota (um controller
-/// por página, PROJECT.md §5.3). A navegação lateral substitui a rota
-/// atual, então o controller da página anterior é descartado.
+/// por página, PROJECT.md §5.3). Ao sair da rota, o controller é
+/// descartado.
 abstract final class AppPages {
   static const initial = AppRoutes.dashboard;
 
@@ -25,7 +27,22 @@ abstract final class AppPages {
     GetPage(
       name: AppRoutes.applications,
       page: () => const ApplicationsPage(),
-      binding: BindingsBuilder.put(() => ApplicationsController()),
+      binding: BindingsBuilder.put(() => ApplicationsController(Get.find())),
+    ),
+    GetPage(
+      name: AppRoutes.newApplication,
+      page: () => const ApplicationFormPage(),
+      binding: BindingsBuilder.put(() => ApplicationFormController(Get.find())),
+    ),
+    GetPage(
+      name: AppRoutes.editApplication,
+      page: () => const ApplicationFormPage(),
+      binding: BindingsBuilder.put(
+        () => ApplicationFormController(
+          Get.find(),
+          applicationId: Get.parameters['id'],
+        ),
+      ),
     ),
     GetPage(
       name: AppRoutes.followUps,

@@ -48,17 +48,27 @@ class AppShell extends StatelessWidget {
     required this.currentRoute,
     required this.title,
     required this.child,
+    this.actions = const [],
+    this.canLeave,
   });
 
+  /// Seção da navegação lateral que fica marcada.
   final String currentRoute;
   final String title;
   final Widget child;
 
-  void _navigate(int index) {
+  /// Botões exibidos à direita do título.
+  final List<Widget> actions;
+
+  /// Consultado antes de trocar de seção (ex.: alterações não salvas).
+  final Future<bool> Function()? canLeave;
+
+  /// Troca de seção limpando a pilha, para não acumular páginas.
+  Future<void> _navigate(int index) async {
     final route = _destinations[index].route;
-    if (route != currentRoute) {
-      Get.offNamed(route);
-    }
+    if (route == Get.currentRoute) return;
+    if (canLeave != null && !await canLeave!()) return;
+    Get.offAllNamed(route);
   }
 
   @override
@@ -95,7 +105,17 @@ class AppShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: Theme.of(context).textTheme.headlineSmall),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                      ...actions,
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   Expanded(child: child),
                 ],

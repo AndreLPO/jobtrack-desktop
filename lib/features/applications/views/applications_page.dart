@@ -3,18 +3,291 @@ import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/shell/app_shell.dart';
-import '../../../core/widgets/under_construction.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../app/theme/app_spacing.dart';
+import '../../../core/formatting/date_format.dart';
+import '../../../core/widgets/feedback.dart';
+import '../../../core/widgets/state_views.dart';
+import '../models/application.dart';
 import '../viewmodels/applications_controller.dart';
+import 'labels.dart';
+import 'status_badge.dart';
 
 class ApplicationsPage extends GetView<ApplicationsController> {
   const ApplicationsPage({super.key});
 
+  Future<void> _openForm(BuildContext context, String route) async {
+    // As rotas do GetX são dinâmicas; o formulário devolve `true` ao salvar.
+    final saved = await Get.toNamed(route);
+    if (saved != true) return;
+    await controller.load();
+    if (context.mounted) showFeedback(context, 'Candidatura salva.');
+  }
+
+  Future<void> _delete(BuildContext context, Application application) async {
+    final confirmed = await confirm(
+      context,
+      title: 'Excluir candidatura?',
+      message:
+          '${application.details.companyName} — '
+          '${application.details.jobTitle}\n\n'
+          'O histórico de status e os contatos também serão excluídos. '
+          'Esta ação não pode ser desfeita.',
+      confirmLabel: 'Excluir',
+      destructive: true,
+    );
+    if (!confirmed) return;
+    final deleted = await controller.delete(application.id);
+    if (!context.mounted) return;
+    showFeedback(
+      context,
+      deleted
+          ? 'Candidatura excluída.'
+          : 'Não foi possível excluir a candidatura. Tente novamente.',
+      error: !deleted,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const AppShell(
+    return AppShell(
       currentRoute: AppRoutes.applications,
       title: 'Candidaturas',
-      child: UnderConstruction(),
+      actions: [
+        FilledButton.icon(
+          onPressed: () => _openForm(context, AppRoutes.newApplication),
+          icon: const Icon(Icons.add, size: 18),
+          label: const Text('Nova candidatura'),
+        ),
+      ],
+      child: Obx(() {
+        switch (controller.status.value) {
+          case ListStatus.loading:
+            return const LoadingView();
+          case ListStatus.error:
+            return MessageView(
+              title: 'Não foi possível carregar as candidaturas.',
+              message: 'Seus registros não foram alterados.',
+              actionLabel: 'Tentar novamente',
+              onAction: controller.load,
+            );
+          case ListStatus.ready:
+            return _buildReady(context);
+        }
+      }),
+    );
+  }
+
+  Widget _buildReady(BuildContext context) {
+    final applications = controller.applications;
+    final unreadable = controller.unreadableCount.value;
+    if (applications.isEmpty && unreadable == 0) {
+      return MessageView(
+        title: 'Nenhuma candidatura cadastrada.',
+        message:
+            'Registre as vagas às quais você se candidatou para '
+            'acompanhar respostas e prazos.',
+        actionLabel: 'Cadastrar primeira candidatura',
+        onAction: () => _openForm(context, AppRoutes.newApplication),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (unreadable > 0) ...[
+          WarningBanner(
+            message: unreadable == 1
+                ? '1 registro não pôde ser lido e não aparece na lista. '
+                      'Ele foi mantido sem alterações.'
+                : '$unreadable registros não puderam ser lidos e não '
+                      'aparecem na lista. Eles foram mantidos sem alterações.',
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        Expanded(
+          child: _ApplicationsTable(
+            applications: applications,
+            onOpen: (a) =>
+                _openForm(context, AppRoutes.editApplicationPath(a.id)),
+            onDelete: (a) => _delete(context, a),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Tabela com cabeçalho fixo e linhas preguiçosas.
+class _ApplicationsTable extends StatelessWidget {
+  const _ApplicationsTable({
+    required this.applications,
+    required this.onOpen,
+    required this.onDelete,
+  });
+
+  static const _channelBreakpoint = 800.0;
+
+  final List<Application> applications;
+  final ValueChanged<Application> onOpen;
+  final ValueChanged<Application> onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final showChannel = constraints.maxWidth >= _channelBreakpoint;
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: Column(
+            children: [
+              _HeaderRow(showChannel: showChannel),
+              const Divider(),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: applications.length,
+                  separatorBuilder: (_, _) => const Divider(),
+                  itemBuilder: (context, index) => _ApplicationRow(
+                    application: applications[index],
+                    showChannel: showChannel,
+                    onOpen: onOpen,
+                    onDelete: onDelete,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+const _dateWidth = 110.0;
+const _statusWidth = 190.0;
+const _menuWidth = 48.0;
+
+class _HeaderRow extends StatelessWidget {
+  const _HeaderRow({required this.showChannel});
+
+  final bool showChannel;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.labelLarge
+        ?.copyWith(color: AppColors.textSecondary);
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
+      child: Row(
+        children: [
+          Expanded(flex: 3, child: Text('Empresa', style: style)),
+          Expanded(flex: 3, child: Text('Vaga', style: style)),
+          SizedBox(
+            width: _dateWidth,
+            child: Text('Data', style: style),
+          ),
+          if (showChannel)
+            Expanded(flex: 2, child: Text('Canal', style: style)),
+          SizedBox(
+            width: _statusWidth,
+            child: Text('Status', style: style),
+          ),
+          const SizedBox(width: _menuWidth),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApplicationRow extends StatelessWidget {
+  const _ApplicationRow({
+    required this.application,
+    required this.showChannel,
+    required this.onOpen,
+    required this.onDelete,
+  });
+
+  final Application application;
+  final bool showChannel;
+  final ValueChanged<Application> onOpen;
+  final ValueChanged<Application> onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = application.details;
+    return InkWell(
+      onTap: () => onOpen(application),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            Expanded(flex: 3, child: _Cell(details.companyName, strong: true)),
+            Expanded(flex: 3, child: _Cell(details.jobTitle)),
+            SizedBox(
+              width: _dateWidth,
+              child: _Cell(formatDate(details.applicationDate)),
+            ),
+            if (showChannel)
+              Expanded(flex: 2, child: _Cell(channelDisplay(details))),
+            SizedBox(
+              width: _statusWidth,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: StatusBadge(status: application.status),
+              ),
+            ),
+            SizedBox(
+              width: _menuWidth,
+              child: PopupMenuButton<_RowAction>(
+                tooltip: 'Ações',
+                icon: const Icon(Icons.more_vert, size: 20),
+                onSelected: (action) => switch (action) {
+                  _RowAction.edit => onOpen(application),
+                  _RowAction.delete => onDelete(application),
+                },
+                itemBuilder: (_) => const [
+                  PopupMenuItem(value: _RowAction.edit, child: Text('Editar')),
+                  PopupMenuItem(
+                    value: _RowAction.delete,
+                    child: Text('Excluir'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _RowAction { edit, delete }
+
+class _Cell extends StatelessWidget {
+  const _Cell(this.text, {this.strong = false});
+
+  final String text;
+  final bool strong;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: AppSpacing.md),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: strong ? const TextStyle(fontWeight: FontWeight.w600) : null,
+      ),
     );
   }
 }

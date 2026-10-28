@@ -9,7 +9,7 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 | 0 ✅ | **Base executável** | `flutter create --platforms=windows`; `get`, `hive_ce` e `hive_ce_flutter` com versões verificadas por `flutter pub get`; lints; tokens de tema claro (cores, espaçamento, tipografia, raios, sem sombra); shell com navegação lateral e 4 páginas placeholder com seus controllers e rotas; inicialização do Hive antes do `runApp`, com tela de erro amigável se falhar. Teste: smoke de navegação. | D-44, D-42 (provisório) |
 | 1 ✅ | **Domínio puro** | Enums (status com classificação, canal, tipo de contato, modalidade); `Application`, `StatusChange`, `Interaction`; validações; `hasResponse`, `lastContactAt`, semana atual, `FollowUpPolicy`. Somente testes unitários. (`Clock` adiado para a Etapa 3.) | — |
 | 2 ✅ | **Persistência** | Repositórios de candidaturas e de configurações (interface + implementação Hive); mapeamento com `schemaVersion`; falhas tipadas; testes de CRUD, de reabertura de boxes e de exclusão. | — |
-| 3  | **Candidaturas: listagem + formulário** | Cadastrar, editar e listar, com aviso de duplicidade; estados vazio, erro e carregando; exclusão com confirmação. | D-06 |
+| 3 ✅ | **Candidaturas: listagem + formulário** | Cadastrar, editar e listar, com aviso de duplicidade; estados vazio, erro e carregando; exclusão com confirmação. | — |
 | 4  | **Detalhes** | Histórico de status, alterar status, registrar contato, descrição da vaga. | D-19 |
 | 5  | **Busca, filtros e ordenação** | RF-04, exceto o filtro de acompanhamento. | — |
 | 6  | **Configurações** | Prazo e limite de tentativas. | — |

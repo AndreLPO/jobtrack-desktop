@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:jobtrack_desktop/app/app.dart';
+import 'package:jobtrack_desktop/features/applications/repositories/application_repository.dart';
 import 'package:jobtrack_desktop/features/applications/viewmodels/applications_controller.dart';
 import 'package:jobtrack_desktop/features/applications/views/applications_page.dart';
 import 'package:jobtrack_desktop/features/dashboard/viewmodels/dashboard_controller.dart';
@@ -11,10 +12,15 @@ import 'package:jobtrack_desktop/features/follow_ups/views/follow_ups_page.dart'
 import 'package:jobtrack_desktop/features/settings/viewmodels/settings_controller.dart';
 import 'package:jobtrack_desktop/features/settings/views/settings_page.dart';
 
+import '../support/fake_application_repository.dart';
+
 int _selectedRailIndex(WidgetTester tester) =>
     tester.widget<NavigationRail>(find.byType(NavigationRail)).selectedIndex!;
 
 void main() {
+  setUp(() {
+    Get.put<ApplicationRepository>(FakeApplicationRepository());
+  });
   tearDown(Get.reset);
 
   testWidgets('abre no Dashboard com o próprio controller', (tester) async {

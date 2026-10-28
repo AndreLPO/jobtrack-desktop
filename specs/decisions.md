@@ -166,6 +166,17 @@ adotado pelo usuário como base para novas regras e campos.
   domínio, testadas na Etapa 5. Isso substitui os "testes de consulta
   no repositório" do PROJECT.md §10.
 
+### Etapa 3 (2026-10-28, aprovação do plano de listagem e formulário)
+
+- **D-06 — Idioma e formato:** interface em pt-BR, datas `dd/MM/yyyy`,
+  código em inglês. `flutter_localizations` (do Flutter SDK) com
+  `locale` pt_BR para o calendário e os textos padrão do Material.
+- **D-51 — Ações na listagem antes dos detalhes:** clicar na linha abre
+  a edição, e o menu "⋮" tem Editar e Excluir. Na Etapa 4, o clique
+  passa a abrir os detalhes.
+- **D-52 — Alterações não salvas:** ao sair do formulário com mudanças,
+  o app pergunta "Descartar alterações?".
+
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
   recebida e não existe contato posterior, a base é a data da mudança
@@ -203,11 +214,6 @@ adotado pelo usuário como base para novas regras e campos.
 - **Situação:** usa-se provisoriamente a estrutura simples em `specs/`.
   O CLI OpenSpec 1.14.1 está instalado globalmente, mas não foi
   inicializado aqui.
-
-### D-06 — Idioma e formato
-- **Status:** Pendente (N)
-- **Recomendação:** interface em pt-BR, datas `dd/MM/yyyy`, código em
-  inglês.
 
 ### D-19 — `updatedAt`
 - **Status:** Pendente (N)

@@ -15,4 +15,16 @@ abstract final class AppColors {
 
   static const error = Color(0xFFC62828);
   static const onError = Color(0xFFFFFFFF);
+
+  static const warningSubtle = Color(0xFFFFF4E0);
+  static const warningText = Color(0xFF7A4B00);
+
+  /// Fundo dos badges de status. O texto do status é sempre exibido; a
+  /// cor só reforça (PROJECT.md §7.2).
+  static const statusOpen = Color(0xFFF0F2F5);
+  static const statusResponded = accentSubtle;
+  static const statusClosed = Color(0xFFEDEDED);
+
+  static const feedback = Color(0xFF1F2328);
+  static const onFeedback = Color(0xFFFFFFFF);
 }
