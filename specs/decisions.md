@@ -19,8 +19,10 @@ adotado pelo usuário como base para novas regras e campos.
 
 - **D-02 — Persistência:** `hive_ce` + `hive_ce_flutter` (fork mantido
   do Hive, mesma API), em vez do `hive` original, abandonado desde 2022.
-  As versões exatas serão fixadas na Etapa 0 após `flutter pub get`.
-  O ambiente verificado tem Flutter 3.47.7 e Dart 3.13.5.
+  Versões resolvidas na Etapa 0: `get` ^4.7.3, `hive_ce` ^2.22.0,
+  `path_provider` ^2.1.6. O `hive_ce_flutter` foi dispensado: usamos
+  `Hive.init()` com o caminho de D-46. O ambiente verificado tem
+  Flutter 3.47.7 e Dart 3.13.5.
 - **D-04 — Plataforma:** somente Windows na v1.
 - **D-16 — Histórico:** o histórico de status e os contatos ficam
   **embutidos** no registro da candidatura.

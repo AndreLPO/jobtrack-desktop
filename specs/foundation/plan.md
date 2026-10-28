@@ -1,6 +1,6 @@
 # Plano — Etapa 0: Base executável
 
-- **Status:** Aprovado (2026-10-28): org `com.andre`, dados em %APPDATA%, estrutura D-44
+- **Status:** Implementado (2026-10-28). Desvios registrados em `tasks.md` (T2).
 - **Referências:** PROJECT.md §5, §6, §7, §9; `specs/roadmap.md`
   (Etapa 0); decisões D-02, D-04, D-41, D-42, D-44.
 

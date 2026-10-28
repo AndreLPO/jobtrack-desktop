@@ -6,7 +6,7 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 
 | #  | Etapa | Entrega | Decisões ainda abertas |
 |----|-------|---------|------------------------|
-| 0  | **Base executável** | `flutter create --platforms=windows`; `get`, `hive_ce` e `hive_ce_flutter` com versões verificadas por `flutter pub get`; lints; tokens de tema claro (cores, espaçamento, tipografia, raios, sem sombra); shell com navegação lateral e 4 páginas placeholder com seus controllers e rotas; inicialização do Hive antes do `runApp`, com tela de erro amigável se falhar. Teste: smoke de navegação. | D-44, D-42 (provisório) |
+| 0 ✅ | **Base executável** | `flutter create --platforms=windows`; `get`, `hive_ce` e `hive_ce_flutter` com versões verificadas por `flutter pub get`; lints; tokens de tema claro (cores, espaçamento, tipografia, raios, sem sombra); shell com navegação lateral e 4 páginas placeholder com seus controllers e rotas; inicialização do Hive antes do `runApp`, com tela de erro amigável se falhar. Teste: smoke de navegação. | D-44, D-42 (provisório) |
 | 1  | **Domínio puro** | Enums (status com classificação, canal, tipo de contato, modalidade); `Application`, `StatusChange`, `Interaction`; validações; `hasResponse`, `lastContactAt`, semana atual, `FollowUpPolicy`; `Clock` injetável. Somente testes unitários. | — |
 | 2  | **Persistência** | Repositórios de candidaturas e de configurações (interface + implementação Hive); mapeamento com `schemaVersion`; falhas tipadas; testes de CRUD, de reabertura de boxes e de exclusão. | D-03 |
 | 3  | **Candidaturas: listagem + formulário** | Cadastrar, editar e listar, com aviso de duplicidade; estados vazio, erro e carregando; exclusão com confirmação. | D-06 |
