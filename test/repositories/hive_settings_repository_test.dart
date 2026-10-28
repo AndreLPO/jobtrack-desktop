@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jobtrack_desktop/core/database/hive_database.dart';
 import 'package:jobtrack_desktop/core/errors/persistence_exception.dart';
+import 'package:jobtrack_desktop/features/settings/models/applications_view_mode.dart';
 import 'package:jobtrack_desktop/features/settings/models/follow_up_settings.dart';
 import 'package:jobtrack_desktop/features/settings/models/message_template.dart';
 import 'package:jobtrack_desktop/features/settings/repositories/hive_settings_repository.dart';
@@ -98,6 +99,42 @@ void main() {
       );
       expect(
         database.settings.get(HiveSettingsRepository.messageTemplateKey),
+        stored,
+      );
+    });
+  });
+
+  group('modo de visualização (K-04)', () {
+    test('sem registro é lista, sem gravar', () async {
+      expect(
+        await repository.loadApplicationsViewMode(),
+        ApplicationsViewMode.list,
+      );
+      expect(database.settings.isEmpty, isTrue);
+    });
+
+    test('salvar e reabrir lembra o quadro', () async {
+      await repository.saveApplicationsViewMode(ApplicationsViewMode.board);
+      await database.close();
+      await openDatabase();
+      expect(
+        await repository.loadApplicationsViewMode(),
+        ApplicationsViewMode.board,
+      );
+    });
+
+    test('registro ilegível volta para lista sem sobrescrever', () async {
+      final stored = {'schemaVersion': 1, 'mode': 'grid'};
+      await database.settings.put(
+        HiveSettingsRepository.applicationsViewKey,
+        stored,
+      );
+      expect(
+        await repository.loadApplicationsViewMode(),
+        ApplicationsViewMode.list,
+      );
+      expect(
+        database.settings.get(HiveSettingsRepository.applicationsViewKey),
         stored,
       );
     });

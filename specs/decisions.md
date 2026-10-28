@@ -220,6 +220,16 @@ adotado pelo usuário como base para novas regras e campos.
     primeiro e as candidaturas sem data no fim.
   - `{contato}` vazio vira "equipe de recrutamento".
 
+### Quadro Kanban (2026-10-28, planejamento da Etapa 10)
+
+- **K-01:** alternância "Lista | Quadro" dentro de Candidaturas.
+- **K-02:** 5 colunas ativas mais "Encerradas" (agrupada; ao soltar,
+  escolhe-se o status).
+- **K-03:** ao soltar, o status muda na hora, com "Desfazer" que
+  registra a mudança inversa.
+- **K-04:** o modo de visualização é lembrado entre sessões, na box
+  `settings`.
+
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
   recebida e não existe contato posterior, a base é a data da mudança

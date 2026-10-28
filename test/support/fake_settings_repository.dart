@@ -1,4 +1,5 @@
 import 'package:jobtrack_desktop/core/errors/persistence_exception.dart';
+import 'package:jobtrack_desktop/features/settings/models/applications_view_mode.dart';
 import 'package:jobtrack_desktop/features/settings/models/follow_up_settings.dart';
 import 'package:jobtrack_desktop/features/settings/models/message_template.dart';
 import 'package:jobtrack_desktop/features/settings/repositories/settings_repository.dart';
@@ -9,6 +10,7 @@ class FakeSettingsRepository implements SettingsRepository {
 
   FollowUpSettings followUp;
   String messageTemplate = MessageTemplate.defaultText;
+  ApplicationsViewMode viewMode = ApplicationsViewMode.list;
   bool failReads = false;
   bool failWrites = false;
 
@@ -42,5 +44,21 @@ class FakeSettingsRepository implements SettingsRepository {
       throw const PersistenceException(PersistenceOperation.write, 'simulada');
     }
     messageTemplate = text;
+  }
+
+  @override
+  Future<ApplicationsViewMode> loadApplicationsViewMode() async {
+    if (failReads) {
+      throw const PersistenceException(PersistenceOperation.read, 'simulada');
+    }
+    return viewMode;
+  }
+
+  @override
+  Future<void> saveApplicationsViewMode(ApplicationsViewMode mode) async {
+    if (failWrites) {
+      throw const PersistenceException(PersistenceOperation.write, 'simulada');
+    }
+    viewMode = mode;
   }
 }

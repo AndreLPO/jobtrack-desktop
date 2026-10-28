@@ -18,6 +18,12 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 | 8 ✅ | **Dashboard** | Indicadores, resumo por status, rótulos de escopo. | — |
 | 9 ✅ | **Acabamento** | Revisão contra a Definition of Done, responsividade de janela, acessibilidade básica, revisão visual, documentação do local dos dados. | — |
 
+## Pós-v1
+
+| #  | Etapa | Entrega | Decisões ainda abertas |
+|----|-------|---------|------------------------|
+| 10 ✅ | **Quadro Kanban** | Modo "Quadro" em Candidaturas: colunas por status, arrastar para mudar status, "Mover para…" ([spec](kanban/spec.md), [plano](kanban/plan.md)). | — (K-01 a K-04 aprovadas) |
+
 ## Racional da ordem
 
 - **0 → 2** priorizam o app executável e a persistência confiável,

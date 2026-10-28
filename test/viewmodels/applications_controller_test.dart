@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jobtrack_desktop/features/applications/models/application_query.dart';
+import 'package:jobtrack_desktop/features/applications/models/application_status.dart';
 import 'package:jobtrack_desktop/features/applications/viewmodels/applications_controller.dart';
+import 'package:jobtrack_desktop/features/settings/models/applications_view_mode.dart';
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
@@ -142,5 +144,79 @@ void main() {
 
     expect(await controller.delete('a'), isFalse);
     expect(controller.applications, hasLength(1));
+  });
+
+  group('quadro (Etapa 10)', () {
+    setUp(() {
+      repository.store['a'] = buildApplication(id: 'a');
+    });
+
+    test('K-04: carrega e grava o modo de visualização', () async {
+      settings.viewMode = ApplicationsViewMode.board;
+      await controller.load();
+      expect(controller.viewMode.value, ApplicationsViewMode.board);
+
+      await controller.setViewMode(ApplicationsViewMode.list);
+      expect(settings.viewMode, ApplicationsViewMode.list);
+    });
+
+    test('falha ao gravar o modo não impede a troca', () async {
+      await controller.load();
+      settings.failWrites = true;
+      await controller.setViewMode(ApplicationsViewMode.board);
+      expect(controller.viewMode.value, ApplicationsViewMode.board);
+    });
+
+    test('CA-KB-02: mover grava o StatusChange e atualiza a lista', () async {
+      await controller.load();
+      expect(
+        await controller.moveTo('a', ApplicationStatus.interview),
+        MoveResult.moved,
+      );
+      final saved = repository.store['a']!;
+      expect(saved.status, ApplicationStatus.interview);
+      expect(
+        saved.statusHistory.last.previousStatus,
+        ApplicationStatus.applied,
+      );
+      expect(
+        controller.applications.single.status,
+        ApplicationStatus.interview,
+      );
+    });
+
+    test('CA-KB-03: mesmo status não grava', () async {
+      await controller.load();
+      expect(
+        await controller.moveTo('a', ApplicationStatus.applied),
+        MoveResult.unchanged,
+      );
+      expect(repository.store['a']!.statusHistory, hasLength(1));
+    });
+
+    test('CA-KB-04: falha mantém o status', () async {
+      await controller.load();
+      repository.failWrites = true;
+      expect(
+        await controller.moveTo('a', ApplicationStatus.interview),
+        MoveResult.failed,
+      );
+      expect(controller.applications.single.status, ApplicationStatus.applied);
+    });
+
+    test('K-03: desfazer registra a mudança inversa', () async {
+      await controller.load();
+      await controller.moveTo('a', ApplicationStatus.rejected);
+      expect(
+        await controller.moveTo('a', ApplicationStatus.applied),
+        MoveResult.moved,
+      );
+      final history = repository.store['a']!.statusHistory;
+      expect(history.map((c) => c.newStatus), [
+        ApplicationStatus.applied,
+        ApplicationStatus.rejected,
+        ApplicationStatus.applied,
+      ]);
+    });
   });
 }

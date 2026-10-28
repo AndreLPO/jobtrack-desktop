@@ -10,11 +10,15 @@ import '../../../core/widgets/feedback.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/time/local_date.dart';
 import '../../follow_ups/views/follow_up_labels.dart';
+import '../../settings/models/applications_view_mode.dart';
 import '../models/application.dart';
+import '../models/application_status.dart';
+import '../models/kanban.dart';
 import '../models/follow_up_policy.dart';
 import '../viewmodels/applications_controller.dart';
 import 'application_details_page.dart';
 import 'applications_toolbar.dart';
+import 'kanban_board.dart';
 import 'labels.dart';
 import 'status_badge.dart';
 
@@ -36,6 +40,43 @@ class ApplicationsPage extends GetView<ApplicationsController> {
     await controller.load();
     if (result == detailsDeletedResult && context.mounted) {
       showFeedback(context, 'Candidatura excluída.');
+    }
+  }
+
+  /// Mudança de status pelo quadro, com "Desfazer" (K-03).
+  Future<void> _move(
+    BuildContext context,
+    Application application,
+    ApplicationStatus status,
+  ) async {
+    final previous = application.status;
+    final result = await controller.moveTo(application.id, status);
+    if (!context.mounted) return;
+    switch (result) {
+      case MoveResult.unchanged:
+        return;
+      case MoveResult.failed:
+        showFeedback(
+          context,
+          'Não foi possível mover a candidatura. Tente novamente.',
+          error: true,
+        );
+      case MoveResult.moved:
+        showFeedback(
+          context,
+          '${application.details.companyName} movida para ${status.label}.',
+          actionLabel: 'Desfazer',
+          onAction: () async {
+            final undo = await controller.moveTo(application.id, previous);
+            if (undo == MoveResult.failed && context.mounted) {
+              showFeedback(
+                context,
+                'Não foi possível desfazer. Tente novamente.',
+                error: true,
+              );
+            }
+          },
+        );
     }
   }
 
@@ -125,6 +166,8 @@ class ApplicationsPage extends GetView<ApplicationsController> {
           sort: controller.sort.value,
           onFilterChanged: controller.setFilter,
           onSortChanged: controller.setSort,
+          viewMode: controller.viewMode.value,
+          onViewModeChanged: controller.setViewMode,
         ),
         const SizedBox(height: AppSpacing.md),
         _ResultSummary(
@@ -140,6 +183,17 @@ class ApplicationsPage extends GetView<ApplicationsController> {
                   title: 'Nenhuma candidatura corresponde aos filtros.',
                   actionLabel: 'Limpar filtros',
                   onAction: controller.clearFilters,
+                )
+              : controller.viewMode.value == ApplicationsViewMode.board
+              ? KanbanBoard(
+                  columns: visibleKanbanColumns(
+                    controller.filter.value.statuses,
+                  ),
+                  applications: visible,
+                  followUpOf: controller.followUpOf,
+                  today: controller.today,
+                  onOpen: (a) => _openDetails(context, a),
+                  onMove: (a, status) => _move(context, a, status),
                 )
               : _ApplicationsTable(
                   applications: visible,

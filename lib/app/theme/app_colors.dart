@@ -27,4 +27,5 @@ abstract final class AppColors {
 
   static const feedback = Color(0xFF1F2328);
   static const onFeedback = Color(0xFFFFFFFF);
+  static const feedbackAction = Color(0xFF9DBAF5);
 }

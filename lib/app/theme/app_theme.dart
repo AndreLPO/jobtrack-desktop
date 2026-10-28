@@ -106,6 +106,7 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.feedback,
         contentTextStyle: const TextStyle(color: AppColors.onFeedback),
+        actionTextColor: AppColors.feedbackAction,
         elevation: 0,
         behavior: SnackBarBehavior.floating,
         width: 480,

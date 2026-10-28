@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 import '../../../core/errors/persistence_exception.dart';
+import '../models/applications_view_mode.dart';
 import '../models/follow_up_settings.dart';
 import '../models/message_template.dart';
+import 'applications_view_mode_mapper.dart';
 import 'follow_up_settings_mapper.dart';
 import 'message_template_mapper.dart';
 import 'settings_repository.dart';
@@ -13,6 +15,7 @@ class HiveSettingsRepository implements SettingsRepository {
 
   static const followUpKey = 'followUp';
   static const messageTemplateKey = 'messageTemplate';
+  static const applicationsViewKey = 'applicationsView';
 
   final Box<Map<dynamic, dynamic>> _box;
 
@@ -47,6 +50,22 @@ class HiveSettingsRepository implements SettingsRepository {
   @override
   Future<void> saveMessageTemplate(String text) =>
       _put(messageTemplateKey, MessageTemplateMapper.toMap(text));
+
+  @override
+  Future<ApplicationsViewMode> loadApplicationsViewMode() async {
+    final map = _get(applicationsViewKey);
+    if (map == null) return ApplicationsViewMode.list;
+    try {
+      return ApplicationsViewModeMapper.fromMap(map);
+    } on FormatException catch (error) {
+      debugPrint('Preferência de visualização ilegível; usando lista: $error');
+      return ApplicationsViewMode.list;
+    }
+  }
+
+  @override
+  Future<void> saveApplicationsViewMode(ApplicationsViewMode mode) =>
+      _put(applicationsViewKey, ApplicationsViewModeMapper.toMap(mode));
 
   Map<dynamic, dynamic>? _get(String key) {
     try {

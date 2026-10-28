@@ -6,6 +6,7 @@ import '../../../core/time/local_date.dart';
 import '../../../core/widgets/date_field.dart';
 import '../models/application_channel.dart';
 import '../models/application_query.dart';
+import '../../settings/models/applications_view_mode.dart';
 import '../models/application_status.dart';
 import 'labels.dart';
 
@@ -17,12 +18,16 @@ class ApplicationsToolbar extends StatelessWidget {
     required this.sort,
     required this.onFilterChanged,
     required this.onSortChanged,
+    required this.viewMode,
+    required this.onViewModeChanged,
   });
 
   final ApplicationFilter filter;
   final ApplicationSort sort;
   final ValueChanged<ApplicationFilter> onFilterChanged;
   final ValueChanged<ApplicationSort> onSortChanged;
+  final ApplicationsViewMode viewMode;
+  final ValueChanged<ApplicationsViewMode> onViewModeChanged;
 
   Future<void> _pickPeriod(BuildContext context) async {
     final period = await showDialog<_Period>(
@@ -88,6 +93,24 @@ class ApplicationsToolbar extends StatelessWidget {
               onFilterChanged(filter.copyWith(onlyNeedingFollowUp: value)),
         ),
         _SortMenu(sort: sort, onChanged: onSortChanged),
+        SegmentedButton<ApplicationsViewMode>(
+          showSelectedIcon: false,
+          segments: const [
+            ButtonSegment(
+              value: ApplicationsViewMode.list,
+              icon: Icon(Icons.view_list_outlined, size: 18),
+              label: Text('Lista'),
+            ),
+            ButtonSegment(
+              value: ApplicationsViewMode.board,
+              icon: Icon(Icons.view_kanban_outlined, size: 18),
+              label: Text('Quadro'),
+            ),
+          ],
+          selected: {viewMode},
+          onSelectionChanged: (selection) =>
+              onViewModeChanged(selection.single),
+        ),
       ],
     );
   }

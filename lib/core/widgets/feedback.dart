@@ -2,14 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
 
-/// Mensagem curta de resultado de operação (PROJECT.md §9).
-void showFeedback(BuildContext context, String message, {bool error = false}) {
+/// Mensagem curta de resultado de operação (PROJECT.md §9), com ação
+/// opcional (ex.: "Desfazer").
+void showFeedback(
+  BuildContext context,
+  String message, {
+  bool error = false,
+  String? actionLabel,
+  VoidCallback? onAction,
+}) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: error ? AppColors.error : null,
+        action: actionLabel == null || onAction == null
+            ? null
+            : SnackBarAction(label: actionLabel, onPressed: onAction),
       ),
     );
 }

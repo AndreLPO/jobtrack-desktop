@@ -1,3 +1,4 @@
+import '../models/applications_view_mode.dart';
 import '../models/follow_up_settings.dart';
 
 /// Acesso às configurações locais. As operações lançam
@@ -14,4 +15,10 @@ abstract interface class SettingsRepository {
   Future<String> loadMessageTemplate();
 
   Future<void> saveMessageTemplate(String text);
+
+  /// Último modo usado em Candidaturas (K-04); lista se não houver
+  /// registro ou se ele for ilegível.
+  Future<ApplicationsViewMode> loadApplicationsViewMode();
+
+  Future<void> saveApplicationsViewMode(ApplicationsViewMode mode);
 }
