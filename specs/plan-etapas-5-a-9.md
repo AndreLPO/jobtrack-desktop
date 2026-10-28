@@ -1,7 +1,7 @@
 # Plano — Etapas 5 a 9
 
-- **Status:** Aprovado para execução em sequência (2026-10-28). Dúvidas
-  resolvidas em D-50, D-56 a D-59.
+- **Status:** Implementado (2026-10-28). Dúvidas resolvidas em D-50,
+  D-56 a D-59. Ver "Resultado" no fim.
 - **Referências:** specs de applications (§7), follow-ups, settings e
   dashboard; `specs/roadmap.md`.
 
@@ -91,3 +91,51 @@ Cada etapa termina com `dart format`, `flutter analyze`,
   - estados vazio e erro em todas as páginas;
   - nenhuma View ou controller acessa o Hive.
 - `README.md` do projeto: como rodar e testar, e onde ficam os dados.
+
+## Resultado (2026-10-28)
+
+| Etapa | Commit | Testes no total |
+|-------|--------|-----------------|
+| 5 | `c6d7ac1` | 193 |
+| 6 | `35355c0` | 204 |
+| 7 | `1928d82` | 218 |
+| 7b | `c67f0c2` | 233 |
+| 8 | `6aac6e5` | 251 |
+| 9 | este commit | 251 |
+
+Verificação final:
+
+- `dart format .`: sem pendências.
+- `flutter analyze`: "No issues found!".
+- `flutter test`: 251 testes, "All tests passed!".
+- `flutter build windows --release`: build concluído.
+- O app em release abriu com a janela "JobTrack". O tamanho mínimo foi
+  confirmado pedindo 400×300 via `SetWindowPos`: a janela ficou em
+  960×600 a 96 DPI.
+
+Auditoria da Definition of Done, feita por grep em `lib/`:
+
+- nenhum `Gradient`, `BoxShadow` ou `elevation` maior que 0;
+- `hive_ce` importado só em `core/database` e `repositories/hive_*`;
+- nenhum controller importa widgets;
+- domínio (`models`, `core/time`, `core/formatting`) sem Flutter, GetX
+  ou Hive;
+- cores só em `app/theme`.
+
+Ajustes e desvios:
+
+- **Etapa 5:** o filtro "Precisam de acompanhamento" e a ordenação por
+  próximo acompanhamento entraram já aqui, porque o domínio e o
+  carregamento das configurações ficaram prontos nesta etapa. A Etapa 7
+  adicionou a coluna do indicador.
+- **Etapa 7:** bug encontrado pelos testes e corrigido: a página de
+  Acompanhamentos não se redesenhava depois de uma ação, porque o corpo
+  não estava em um `Obx`.
+- **Etapa 8:** `DashboardMetrics` fica em `applications/models`, porque
+  é uma consulta sobre candidaturas (D-44). O widget `UnderConstruction`
+  foi removido.
+- **Etapa 9:** `url_launcher` ^6.3.3; tamanho mínimo de 960×600 em
+  pixels lógicos no runner Win32; README do projeto.
+
+Pendentes não bloqueantes: D-01 (adotar OpenSpec) e D-42 (identidade
+visual final).

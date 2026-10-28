@@ -1,6 +1,6 @@
 # Spec — Candidaturas (applications)
 
-- **Status:** Rascunho. Pendência não bloqueante: D-19.
+- **Status:** Implementada (2026-10-28). Ver `specs/roadmap.md` e os planos de cada etapa.
 - **Origem:** PROJECT.md RF-01, RF-02, RF-03, RF-04, RF-07, RF-08,
   RF-09; RN-01, RN-02, RN-04, RN-06, RN-07, RN-08. Decisões D-10 a
   D-18 e D-26.

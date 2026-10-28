@@ -1,6 +1,6 @@
 # Spec — Dashboard
 
-- **Status:** Rascunho. Os bloqueios restantes estão nas specs de que
+- **Status:** Implementada (2026-10-28). Ver `specs/roadmap.md` e os planos de cada etapa.
   depende.
 - **Origem:** PROJECT.md RF-05; RN-02, RN-03, RN-04, RN-05; §8.
   Decisões D-10, D-11, D-21, D-30, D-31.

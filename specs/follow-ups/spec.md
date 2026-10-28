@@ -1,6 +1,6 @@
 # Spec — Acompanhamentos (follow-ups)
 
-- **Status:** Rascunho. Sem bloqueios; pronta para aprovação.
+- **Status:** Implementada (2026-10-28). Ver `specs/roadmap.md` e os planos de cada etapa.
 - **Origem:** PROJECT.md RF-06, RF-07, RF-10; RN-04, RN-05; §8.
   Decisões D-10, D-11, D-20 a D-23, D-25, D-26, D-28, D-40.
 - **Depende de:** applications (modelo), settings (prazo e limite de

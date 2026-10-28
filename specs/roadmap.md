@@ -16,7 +16,7 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 | 7 ✅ | **Acompanhamentos** | Seções "Vencidos" e "Sugerido encerrar"; indicador e filtro na listagem; registrar contato, adiar, encerrar sem resposta. | — |
 | 7b ✅ | **Modelo de mensagem** | Texto editável (padrão pt-BR) com variáveis, copiado nos Acompanhamentos e nos detalhes (D-27, D-50). | — |
 | 8 ✅ | **Dashboard** | Indicadores, resumo por status, rótulos de escopo. | — |
-| 9  | **Acabamento** | Revisão contra a Definition of Done, responsividade de janela, acessibilidade básica, revisão visual, documentação do local dos dados. | — |
+| 9 ✅ | **Acabamento** | Revisão contra a Definition of Done, responsividade de janela, acessibilidade básica, revisão visual, documentação do local dos dados. | — |
 
 ## Racional da ordem
 

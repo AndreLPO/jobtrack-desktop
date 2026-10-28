@@ -187,6 +187,19 @@ Win32Window::MessageHandler(HWND hwnd,
       }
       return 0;
 
+    case WM_GETMINMAXINFO: {
+      // Tamanho mínimo da janela em pixels lógicos, ajustado ao DPI do
+      // monitor, para que a navegação e as tabelas continuem legíveis.
+      constexpr int kMinWidth = 960;
+      constexpr int kMinHeight = 600;
+      HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+      double scale_factor = FlutterDesktopGetDpiForMonitor(monitor) / 96.0;
+      auto info = reinterpret_cast<MINMAXINFO*>(lparam);
+      info->ptMinTrackSize.x = Scale(kMinWidth, scale_factor);
+      info->ptMinTrackSize.y = Scale(kMinHeight, scale_factor);
+      return 0;
+    }
+
     case WM_DPICHANGED: {
       auto newRectSize = reinterpret_cast<RECT*>(lparam);
       LONG newWidth = newRectSize->right - newRectSize->left;

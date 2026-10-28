@@ -1,6 +1,6 @@
 # Spec — Configurações (settings)
 
-- **Status:** Rascunho. Pronta para aprovação, sem bloqueios abertos.
+- **Status:** Implementada (2026-10-28). Ver `specs/roadmap.md` e os planos de cada etapa.
 - **Origem:** PROJECT.md RF-10; §6 (`AppSettings`). Decisões D-20, D-21,
   D-25, D-40, D-41.
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/shell/app_shell.dart';
@@ -399,7 +400,7 @@ class _LabeledText extends StatelessWidget {
   }
 }
 
-/// Abrir no navegador exigiria `url_launcher`; por ora, copia o link.
+/// Link da vaga: abrir no navegador (D-58) ou copiar.
 class _LinkRow extends StatelessWidget {
   const _LinkRow({required this.url});
 
@@ -411,6 +412,28 @@ class _LinkRow extends StatelessWidget {
       children: [
         Expanded(
           child: _LabeledText(label: 'Link da vaga', text: url),
+        ),
+        IconButton(
+          tooltip: 'Abrir no navegador',
+          icon: const Icon(Icons.open_in_new, size: 18),
+          onPressed: () async {
+            bool opened;
+            try {
+              opened = await launchUrl(
+                Uri.parse(url),
+                mode: LaunchMode.externalApplication,
+              );
+            } on Exception {
+              opened = false;
+            }
+            if (!opened && context.mounted) {
+              showFeedback(
+                context,
+                'Não foi possível abrir o link. Copie e cole no navegador.',
+                error: true,
+              );
+            }
+          },
         ),
         IconButton(
           tooltip: 'Copiar link',
@@ -547,7 +570,7 @@ class _Tag extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
-          vertical: 2,
+          vertical: AppSpacing.xs / 2,
         ),
         decoration: BoxDecoration(
           color: AppColors.statusResponded,

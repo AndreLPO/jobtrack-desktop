@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../app/theme/app_spacing.dart';
 import '../../../core/formatting/date_format.dart';
 import '../../../core/time/local_date.dart';
 import '../../applications/models/follow_up_policy.dart';
@@ -66,7 +67,7 @@ class FollowUpIndicator extends StatelessWidget {
       children: [
         if (icon != null) ...[
           Icon(icon, size: 16, color: color),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xs),
         ],
         Flexible(
           child: Text(text, style: style, overflow: TextOverflow.ellipsis),
