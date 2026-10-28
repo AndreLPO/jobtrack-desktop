@@ -11,6 +11,7 @@ import 'package:jobtrack_desktop/features/applications/viewmodels/application_fo
 import 'package:jobtrack_desktop/features/applications/views/application_form_page.dart';
 import 'package:jobtrack_desktop/features/applications/views/applications_page.dart';
 import 'package:jobtrack_desktop/features/applications/views/status_badge.dart';
+import 'package:jobtrack_desktop/features/dashboard/views/dashboard_page.dart';
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
@@ -437,7 +438,7 @@ void main() {
         await tester.tap(find.text('Descartar'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Em construção.'), findsOneWidget);
+        expect(find.byType(DashboardPage), findsOneWidget);
         expect(Get.isRegistered<ApplicationFormController>(), isFalse);
       });
 

@@ -26,7 +26,9 @@ abstract final class AppPages {
     GetPage(
       name: AppRoutes.dashboard,
       page: () => const DashboardPage(),
-      binding: BindingsBuilder.put(() => DashboardController()),
+      binding: BindingsBuilder.put(
+        () => DashboardController(Get.find(), Get.find()),
+      ),
     ),
     GetPage(
       name: AppRoutes.applications,
