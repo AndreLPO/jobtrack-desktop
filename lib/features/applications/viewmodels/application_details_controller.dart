@@ -4,6 +4,8 @@ import '../../../core/errors/persistence_exception.dart';
 import '../../../core/ids.dart';
 import '../../../core/time/clock.dart';
 import '../../../core/time/local_date.dart';
+import '../../settings/models/message_template.dart';
+import '../../settings/repositories/settings_repository.dart';
 import '../models/application.dart';
 import '../models/application_status.dart';
 import '../models/application_validation.dart';
@@ -20,13 +22,15 @@ enum DetailsStatus { loading, ready, notFound, error }
 /// de gravação.
 class ApplicationDetailsController extends GetxController {
   ApplicationDetailsController(
-    this._repository, {
+    this._repository,
+    this._settingsRepository, {
     required this.applicationId,
     this._clock = DateTime.now,
     this._newId = generateId,
   });
 
   final ApplicationRepository _repository;
+  final SettingsRepository _settingsRepository;
   final Clock _clock;
   final IdGenerator _newId;
   final String applicationId;
@@ -107,6 +111,17 @@ class ApplicationDetailsController extends GetxController {
   Future<bool> removeInteraction(String interactionId) => _persist(
     application.value!.removeInteraction(interactionId, now: _clock()),
   );
+
+  /// Texto para "Copiar mensagem" (D-27), ou `null` se o modelo não
+  /// puder ser lido.
+  Future<String?> followUpMessage() async {
+    try {
+      final template = await _settingsRepository.loadMessageTemplate();
+      return MessageTemplate.render(template, application.value!);
+    } on PersistenceException {
+      return null;
+    }
+  }
 
   Future<bool> delete() async {
     isBusy.value = true;

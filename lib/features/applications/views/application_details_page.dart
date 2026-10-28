@@ -85,6 +85,23 @@ class ApplicationDetailsPage extends GetView<ApplicationDetailsController> {
     );
   }
 
+  Future<void> _copyMessage(BuildContext context) async {
+    final message = await controller.followUpMessage();
+    if (!context.mounted) return;
+    if (message == null) {
+      showFeedback(
+        context,
+        'Não foi possível ler o modelo de mensagem.',
+        error: true,
+      );
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: message));
+    if (context.mounted) {
+      showFeedback(context, 'Mensagem copiada. Revise antes de enviar.');
+    }
+  }
+
   Future<void> _edit(BuildContext context) async {
     final saved = await Get.toNamed(
       AppRoutes.editApplicationPath(controller.applicationId),
@@ -162,6 +179,7 @@ class ApplicationDetailsPage extends GetView<ApplicationDetailsController> {
             application: app!,
             busy: busy,
             onChangeStatus: () => _changeStatus(context, app),
+            onCopyMessage: () => _copyMessage(context),
             onRegisterContact: () => _registerContact(context),
             onRemoveContact: (i) => _removeContact(context, i),
           ),
@@ -176,6 +194,7 @@ class _DetailsBody extends StatelessWidget {
     required this.application,
     required this.busy,
     required this.onChangeStatus,
+    required this.onCopyMessage,
     required this.onRegisterContact,
     required this.onRemoveContact,
   });
@@ -185,6 +204,7 @@ class _DetailsBody extends StatelessWidget {
   final Application application;
   final bool busy;
   final VoidCallback onChangeStatus;
+  final VoidCallback onCopyMessage;
   final VoidCallback onRegisterContact;
   final ValueChanged<Interaction> onRemoveContact;
 
@@ -229,6 +249,11 @@ class _DetailsBody extends StatelessWidget {
                   TextButton(
                     onPressed: busy ? null : onChangeStatus,
                     child: const Text('Alterar status'),
+                  ),
+                  TextButton.icon(
+                    onPressed: onCopyMessage,
+                    icon: const Icon(Icons.content_copy, size: 16),
+                    label: const Text('Copiar mensagem de acompanhamento'),
                   ),
                 ],
               ),

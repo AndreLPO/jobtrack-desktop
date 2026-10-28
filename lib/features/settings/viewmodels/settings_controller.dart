@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../../../core/errors/persistence_exception.dart';
 import '../models/follow_up_settings.dart';
+import '../models/message_template.dart';
 import '../repositories/settings_repository.dart';
 
 enum SettingsStatus { loading, ready, error }
@@ -25,12 +26,19 @@ class SettingsController extends GetxController {
   final isSaving = false.obs;
   final _saved = const FollowUpSettings().obs;
 
+  /// Modelo de mensagem de acompanhamento (D-50).
+  final templateText = ''.obs;
+  final templateInvalid = false.obs;
+  final isSavingTemplate = false.obs;
+  final _savedTemplate = ''.obs;
+
   FollowUpSettings get saved => _saved.value;
 
   /// Há alterações não salvas (D-59).
   bool get isDirty =>
       intervalText.value.trim() != '${_saved.value.intervalDays}' ||
-      attemptsText.value.trim() != '${_saved.value.maxAttempts}';
+      attemptsText.value.trim() != '${_saved.value.maxAttempts}' ||
+      templateText.value != _savedTemplate.value;
 
   @override
   void onInit() {
@@ -42,6 +50,7 @@ class SettingsController extends GetxController {
     status.value = SettingsStatus.loading;
     try {
       _applySaved(await _repository.loadFollowUp());
+      _applySavedTemplate(await _repository.loadMessageTemplate());
       status.value = SettingsStatus.ready;
     } on PersistenceException {
       status.value = SettingsStatus.error;
@@ -85,6 +94,35 @@ class SettingsController extends GetxController {
     } finally {
       isSaving.value = false;
     }
+  }
+
+  void setTemplate(String text) {
+    templateText.value = text;
+    templateInvalid.value = false;
+  }
+
+  void restoreDefaultTemplate() => setTemplate(MessageTemplate.defaultText);
+
+  Future<SettingsSaveResult> saveTemplate() async {
+    final text = templateText.value;
+    templateInvalid.value = !MessageTemplate.isValid(text);
+    if (templateInvalid.value) return SettingsSaveResult.invalid;
+    isSavingTemplate.value = true;
+    try {
+      await _repository.saveMessageTemplate(text);
+      _applySavedTemplate(text);
+      return SettingsSaveResult.saved;
+    } on PersistenceException {
+      return SettingsSaveResult.failed;
+    } finally {
+      isSavingTemplate.value = false;
+    }
+  }
+
+  void _applySavedTemplate(String text) {
+    _savedTemplate.value = text;
+    templateText.value = text;
+    templateInvalid.value = false;
   }
 
   void _applySaved(FollowUpSettings settings) {

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jobtrack_desktop/features/settings/models/follow_up_settings.dart';
+import 'package:jobtrack_desktop/features/settings/models/message_template.dart';
 import 'package:jobtrack_desktop/features/settings/viewmodels/settings_controller.dart';
 
 import '../support/fake_settings_repository.dart';
@@ -82,5 +83,38 @@ void main() {
     repository.failReads = true;
     await controller.load();
     expect(controller.status.value, SettingsStatus.error);
+  });
+
+  group('modelo de mensagem', () {
+    test('carrega, edita, restaura o padrão e salva', () async {
+      repository.messageTemplate = 'Personalizado';
+      await controller.load();
+      expect(controller.templateText.value, 'Personalizado');
+
+      controller.restoreDefaultTemplate();
+      expect(controller.templateText.value, MessageTemplate.defaultText);
+      expect(controller.isDirty, isTrue);
+
+      expect(await controller.saveTemplate(), SettingsSaveResult.saved);
+      expect(repository.messageTemplate, MessageTemplate.defaultText);
+      expect(controller.isDirty, isFalse);
+    });
+
+    test('modelo vazio é recusado', () async {
+      await controller.load();
+      controller.setTemplate('   ');
+      expect(await controller.saveTemplate(), SettingsSaveResult.invalid);
+      expect(controller.templateInvalid.value, isTrue);
+      expect(repository.messageTemplate, MessageTemplate.defaultText);
+    });
+
+    test('falha ao salvar mantém o anterior', () async {
+      await controller.load();
+      repository.failWrites = true;
+      controller.setTemplate('Novo');
+      expect(await controller.saveTemplate(), SettingsSaveResult.failed);
+      expect(repository.messageTemplate, MessageTemplate.defaultText);
+      expect(controller.isSavingTemplate.value, isFalse);
+    });
   });
 }

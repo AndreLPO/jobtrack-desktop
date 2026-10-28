@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jobtrack_desktop/core/database/hive_database.dart';
 import 'package:jobtrack_desktop/core/errors/persistence_exception.dart';
 import 'package:jobtrack_desktop/features/settings/models/follow_up_settings.dart';
+import 'package:jobtrack_desktop/features/settings/models/message_template.dart';
 import 'package:jobtrack_desktop/features/settings/repositories/hive_settings_repository.dart';
 
 void main() {
@@ -67,5 +68,38 @@ void main() {
         ),
       ),
     );
+  });
+
+  group('modelo de mensagem', () {
+    test('sem registro devolve o padrão sem gravar', () async {
+      expect(
+        await repository.loadMessageTemplate(),
+        MessageTemplate.defaultText,
+      );
+      expect(database.settings.isEmpty, isTrue);
+    });
+
+    test('salvar e reabrir mantém o texto', () async {
+      await repository.saveMessageTemplate('Olá, {contato}.');
+      await database.close();
+      await openDatabase();
+      expect(await repository.loadMessageTemplate(), 'Olá, {contato}.');
+    });
+
+    test('registro ilegível usa o padrão sem sobrescrever', () async {
+      final stored = {'schemaVersion': 9, 'text': 'x'};
+      await database.settings.put(
+        HiveSettingsRepository.messageTemplateKey,
+        stored,
+      );
+      expect(
+        await repository.loadMessageTemplate(),
+        MessageTemplate.defaultText,
+      );
+      expect(
+        database.settings.get(HiveSettingsRepository.messageTemplateKey),
+        stored,
+      );
+    });
   });
 }

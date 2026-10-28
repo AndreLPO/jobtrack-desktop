@@ -7,15 +7,18 @@ import 'package:jobtrack_desktop/features/applications/viewmodels/application_de
 
 import '../support/application_samples.dart';
 import '../support/fake_application_repository.dart';
+import '../support/fake_settings_repository.dart';
 
 void main() {
   final now = DateTime(2026, 10, 28, 15, 30);
   final today = LocalDate(2026, 10, 28);
   late FakeApplicationRepository repository;
+  late FakeSettingsRepository settings;
   var ids = 0;
 
   ApplicationDetailsController build(String id) => ApplicationDetailsController(
     repository,
+    settings,
     applicationId: id,
     clock: () => now,
     newId: () => 'gen-${ids++}',
@@ -30,6 +33,7 @@ void main() {
 
   setUp(() {
     repository = FakeApplicationRepository();
+    settings = FakeSettingsRepository();
     ids = 0;
   });
 
@@ -146,6 +150,23 @@ void main() {
       expect(await c.removeInteraction(id), isTrue);
       expect(c.application.value!.interactions, isEmpty);
       expect(repository.store['a']!.interactions, isEmpty);
+    });
+  });
+
+  group('mensagem de acompanhamento (D-27)', () {
+    test('usa o modelo salvo com as variáveis da candidatura', () async {
+      final c = await loaded();
+      settings.messageTemplate = '{empresa}/{vaga}/{data}/{contato}';
+      expect(
+        await c.followUpMessage(),
+        'Globex/QA/02/10/2026/equipe de recrutamento',
+      );
+    });
+
+    test('falha ao ler o modelo devolve null', () async {
+      final c = await loaded();
+      settings.failReads = true;
+      expect(await c.followUpMessage(), isNull);
     });
   });
 

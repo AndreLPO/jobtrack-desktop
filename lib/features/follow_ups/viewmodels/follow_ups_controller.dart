@@ -12,6 +12,7 @@ import '../../applications/models/interaction.dart';
 import '../../applications/models/interaction_type.dart';
 import '../../applications/repositories/application_repository.dart';
 import '../../settings/models/follow_up_settings.dart';
+import '../../settings/models/message_template.dart';
 import '../../settings/repositories/settings_repository.dart';
 
 enum FollowUpsStatus { loading, ready, error }
@@ -55,6 +56,7 @@ class FollowUpsController extends GetxController {
   final isBusy = false.obs;
 
   List<Application> _applications = const [];
+  String _template = MessageTemplate.defaultText;
 
   LocalDate get today => _clock.today();
 
@@ -69,6 +71,7 @@ class FollowUpsController extends GetxController {
     try {
       final snapshot = await _repository.getAll();
       settings.value = await _settingsRepository.loadFollowUp();
+      _template = await _settingsRepository.loadMessageTemplate();
       _applications = snapshot.applications;
       _recompute();
       status.value = FollowUpsStatus.ready;
@@ -111,6 +114,10 @@ class FollowUpsController extends GetxController {
       ),
     );
   }
+
+  /// Texto para "Copiar mensagem" (D-27). Nada é enviado.
+  String messageFor(Application application) =>
+      MessageTemplate.render(_template, application);
 
   /// "Adiar" (D-23): a data deve ser hoje ou futura.
   ValidationCode? validatePostpone(LocalDate date) =>

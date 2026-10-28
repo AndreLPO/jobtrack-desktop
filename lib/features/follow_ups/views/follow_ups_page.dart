@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
@@ -128,7 +129,7 @@ class _EntryList extends StatelessWidget {
   }
 }
 
-enum _EntryAction { postpone, close, details }
+enum _EntryAction { copyMessage, postpone, close, details }
 
 class _EntryTile extends GetView<FollowUpsController> {
   const _EntryTile({required this.entry});
@@ -193,6 +194,13 @@ class _EntryTile extends GetView<FollowUpsController> {
     if (!confirmed) return;
     final ok = await controller.closeWithoutResponse(_app);
     if (context.mounted) await _report(context, ok, 'Candidatura encerrada.');
+  }
+
+  Future<void> _copyMessage(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: controller.messageFor(_app)));
+    if (context.mounted) {
+      showFeedback(context, 'Mensagem copiada. Revise antes de enviar.');
+    }
   }
 
   Future<void> _openDetails() async {
@@ -274,11 +282,16 @@ class _EntryTile extends GetView<FollowUpsController> {
                     enabled: !busy,
                     icon: const Icon(Icons.more_vert, size: 20),
                     onSelected: (action) => switch (action) {
+                      _EntryAction.copyMessage => _copyMessage(context),
                       _EntryAction.postpone => _postpone(context),
                       _EntryAction.close => _close(context),
                       _EntryAction.details => _openDetails(),
                     },
                     itemBuilder: (_) => [
+                      const PopupMenuItem(
+                        value: _EntryAction.copyMessage,
+                        child: Text('Copiar mensagem'),
+                      ),
                       const PopupMenuItem(
                         value: _EntryAction.postpone,
                         child: Text('Adiar'),

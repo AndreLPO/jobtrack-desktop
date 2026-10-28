@@ -63,6 +63,7 @@ abstract final class AppPages {
       binding: BindingsBuilder.put(
         () => ApplicationDetailsController(
           Get.find(),
+          Get.find(),
           applicationId: Get.parameters['id']!,
         ),
       ),

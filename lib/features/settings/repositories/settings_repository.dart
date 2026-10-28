@@ -8,4 +8,10 @@ abstract interface class SettingsRepository {
   Future<FollowUpSettings> loadFollowUp();
 
   Future<void> saveFollowUp(FollowUpSettings settings);
+
+  /// Devolve o modelo padrão se não houver registro ou se ele for
+  /// ilegível (D-48, D-50), sem gravar nada.
+  Future<String> loadMessageTemplate();
+
+  Future<void> saveMessageTemplate(String text);
 }

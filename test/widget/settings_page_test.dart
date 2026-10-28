@@ -104,4 +104,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SettingsPage), findsOneWidget);
   });
+
+  testWidgets('D-50: restaurar padrão e salvar o modelo', (tester) async {
+    settings.messageTemplate = 'Antigo';
+    await pumpSettings(tester);
+    expect(
+      tester.widget<TextField>(field('Modelo')).controller!.text,
+      'Antigo',
+    );
+
+    await tester.ensureVisible(find.text('Restaurar padrão'));
+    await tester.tap(find.text('Restaurar padrão'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<TextField>(field('Modelo')).controller!.text,
+      startsWith('Olá, {contato}!'),
+    );
+
+    await tester.ensureVisible(find.text('Salvar modelo'));
+    await tester.tap(find.text('Salvar modelo'));
+    await tester.pumpAndSettle();
+    expect(settings.messageTemplate, startsWith('Olá, {contato}!'));
+    expect(find.text('Modelo de mensagem salvo.'), findsOneWidget);
+    await settleFeedback(tester);
+  });
 }

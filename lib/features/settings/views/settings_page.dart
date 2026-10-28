@@ -10,6 +10,7 @@ import '../../../core/widgets/feedback.dart';
 import '../../../core/widgets/section_card.dart';
 import '../../../core/widgets/state_views.dart';
 import '../models/follow_up_settings.dart';
+import '../models/message_template.dart';
 import '../viewmodels/settings_controller.dart';
 
 class SettingsPage extends GetView<SettingsController> {
@@ -145,6 +146,8 @@ class _SettingsBody extends GetView<SettingsController> {
                   ],
                 ),
               ),
+              const SizedBox(height: AppSpacing.lg),
+              const _TemplateSection(),
               if (controller.dataDirectory != null) ...[
                 const SizedBox(height: AppSpacing.lg),
                 _DataLocation(path: controller.dataDirectory!),
@@ -152,6 +155,131 @@ class _SettingsBody extends GetView<SettingsController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _TemplateSection extends GetView<SettingsController> {
+  const _TemplateSection();
+
+  Future<void> _save(BuildContext context) async {
+    final result = await controller.saveTemplate();
+    if (!context.mounted) return;
+    switch (result) {
+      case SettingsSaveResult.saved:
+        showFeedback(context, 'Modelo de mensagem salvo.');
+      case SettingsSaveResult.invalid:
+        showFeedback(context, 'O modelo não pode ficar vazio.', error: true);
+      case SettingsSaveResult.failed:
+        showFeedback(
+          context,
+          'Não foi possível salvar o modelo. O anterior continua valendo.',
+          error: true,
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final secondary = Theme.of(context).textTheme.bodyMedium
+        ?.copyWith(color: AppColors.textSecondary);
+    return SectionCard(
+      title: 'Modelo de mensagem de acompanhamento',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Usado por "Copiar mensagem" nos Acompanhamentos e nos detalhes. '
+            'Nada é enviado: você revisa e envia por e-mail ou LinkedIn. '
+            'Escreva seus dados (nome, LinkedIn, experiência) direto no '
+            'texto. Variáveis disponíveis:',
+            style: secondary,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          for (final entry in MessageTemplate.variables.entries)
+            Text('${entry.key} — ${entry.value}', style: secondary),
+          const SizedBox(height: AppSpacing.lg),
+          Obx(
+            () => _TemplateField(
+              text: controller.templateText.value,
+              onChanged: controller.setTemplate,
+              errorText: controller.templateInvalid.value
+                  ? 'O modelo não pode ficar vazio.'
+                  : null,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: controller.restoreDefaultTemplate,
+                child: const Text('Restaurar padrão'),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Obx(
+                () => FilledButton(
+                  onPressed: controller.isSavingTemplate.value
+                      ? null
+                      : () => _save(context),
+                  child: Text(
+                    controller.isSavingTemplate.value
+                        ? 'Salvando…'
+                        : 'Salvar modelo',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Campo multilinha que acompanha mudanças externas ("Restaurar padrão").
+class _TemplateField extends StatefulWidget {
+  const _TemplateField({
+    required this.text,
+    required this.onChanged,
+    this.errorText,
+  });
+
+  final String text;
+  final ValueChanged<String> onChanged;
+  final String? errorText;
+
+  @override
+  State<_TemplateField> createState() => _TemplateFieldState();
+}
+
+class _TemplateFieldState extends State<_TemplateField> {
+  late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void didUpdateWidget(_TemplateField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.text != _controller.text) _controller.text = widget.text;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _controller,
+      onChanged: widget.onChanged,
+      minLines: 8,
+      maxLines: 16,
+      decoration: InputDecoration(
+        labelText: 'Modelo',
+        alignLabelWithHint: true,
+        errorText: widget.errorText,
       ),
     );
   }

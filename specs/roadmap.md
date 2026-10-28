@@ -14,7 +14,7 @@ antes da próxima. Antes de iniciar uma etapa, criar `plan.md` e
 | 5 ✅ | **Busca, filtros e ordenação** | RF-04 completo (busca sem acento, status, canal, período, "precisam de acompanhamento", 3 ordenações). | — |
 | 6 ✅ | **Configurações** | Prazo e limite de tentativas. | — |
 | 7 ✅ | **Acompanhamentos** | Seções "Vencidos" e "Sugerido encerrar"; indicador e filtro na listagem; registrar contato, adiar, encerrar sem resposta. | — |
-| 7b | **Modelo de mensagem** | Texto pronto para copiar com os dados da candidatura (D-27). Requer spec própria. | D-50 |
+| 7b ✅ | **Modelo de mensagem** | Texto editável (padrão pt-BR) com variáveis, copiado nos Acompanhamentos e nos detalhes (D-27, D-50). | — |
 | 8  | **Dashboard** | Indicadores, resumo por status, rótulos de escopo. | — |
 | 9  | **Acabamento** | Revisão contra a Definition of Done, responsividade de janela, acessibilidade básica, revisão visual, documentação do local dos dados. | — |
 

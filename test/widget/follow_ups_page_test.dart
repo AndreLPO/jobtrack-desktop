@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:jobtrack_desktop/app/app.dart';
@@ -146,5 +147,46 @@ void main() {
     await tester.tap(find.textContaining('Acme —'));
     await tester.pumpAndSettle();
     expect(find.byType(ApplicationDetailsPage), findsOneWidget);
+  });
+
+  testWidgets('D-27: copiar mensagem preenche o modelo e avisa', (
+    tester,
+  ) async {
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    repository.store['a'] = buildApplication(
+      id: 'a',
+      companyName: 'Acme',
+      jobTitle: 'Dev Flutter',
+      applicationDate: ago(9),
+    );
+    await pumpFollowUps(tester);
+
+    await tester.tap(find.byTooltip('Mais ações'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Copiar mensagem'));
+    await tester.pumpAndSettle();
+
+    expect(copied, contains('vaga de Dev Flutter na Acme'));
+    expect(copied, startsWith('Olá, equipe de recrutamento!'));
+    expect(
+      find.text('Mensagem copiada. Revise antes de enviar.'),
+      findsOneWidget,
+    );
+    await settleFeedback(tester);
   });
 }
