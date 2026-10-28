@@ -17,7 +17,9 @@ specs/
 Features iniciais: `dashboard`, `applications`, `follow-ups`,
 `settings`. A pasta `foundation/` guarda o plano e as tarefas da base
 técnica (Etapa 0), que não tem regra de negócio e por isso não tem
-`spec.md`.
+`spec.md`. A pasta `domain/` guarda o plano da Etapa 1, que implementa
+regras de várias specs; as regras em si continuam nas specs de cada
+feature.
 
 ## Ciclo de vida de uma spec
 

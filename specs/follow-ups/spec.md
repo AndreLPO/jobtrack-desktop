@@ -39,9 +39,10 @@ registra o resultado manualmente.
 - **Último contato:** data do contato mais recente (D-14).
 - **Evento de resposta:** contato com `receivedResponse = true` ou
   mudança para um status que indica resposta (D-11).
-- **Tentativas:** contatos do tipo "Acompanhamento enviado" posteriores
-  ao último evento de resposta (D-25). "Agradecimento enviado" não
-  conta.
+- **Tentativas:** contatos do tipo "Acompanhamento enviado" com data
+  **estritamente posterior** à data do último evento de resposta
+  (D-25, D-25b). Um acompanhamento na mesma data da resposta não
+  conta, e "Agradecimento enviado" também não.
 - **Data manual:** campo único da candidatura, `manualNextFollowUpAt`
   (D-21).
 
@@ -72,13 +73,17 @@ As regras são avaliadas **nesta ordem**:
      sugerida é encerramento + 2 dias (D-26, I-4).
   2. Senão, a data sugerida é (último contato ou, na falta dele, data
      da candidatura) + prazo.
-- **RN-FU-05 — Com resposta e status Entrevista** (D-22):
-  1. Se o contato mais recente é do tipo "Entrevista", a data sugerida
-     é a data desse contato + 1 dia.
-  2. Se não há contato posterior à mudança para Entrevista, a data
-     sugerida é a data dessa mudança + 1 dia.
-  3. Senão, a data sugerida é o último contato + prazo. Por exemplo,
-     depois do "Agradecimento enviado", volta a valer o prazo padrão.
+- **RN-FU-05 — Com resposta e status Entrevista** (D-22, D-22b).
+  Considere somente os contatos do tipo "Entrevista" com data igual ou
+  posterior à última mudança para Entrevista.
+  1. Se não existe nenhum desses contatos, a data sugerida é a data da
+     mudança para Entrevista + 1 dia, mesmo que existam outros
+     contatos, como um convite com horário.
+  2. Se existe, e o contato mais recente da candidatura é esse contato
+     de Entrevista, a data sugerida é a data dele + 1 dia.
+  3. Se existe e há algum contato depois dele, a data sugerida é o
+     último contato + prazo. Por exemplo, depois do "Agradecimento
+     enviado", volta a valer o prazo padrão.
 - **RN-FU-06 — Com resposta e status Resposta recebida, Teste técnico
   ou Proposta recebida:** a data sugerida é a mais recente entre o
   último contato e a última mudança de status (I-3), + prazo.

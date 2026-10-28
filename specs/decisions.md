@@ -19,7 +19,7 @@ adotado pelo usuário como base para novas regras e campos.
 
 - **D-02 — Persistência:** `hive_ce` + `hive_ce_flutter` (fork mantido
   do Hive, mesma API), em vez do `hive` original, abandonado desde 2022.
-  Versões resolvidas na Etapa 0: `get` ^4.7.3, `hive_ce` ^2.22.0,
+  Versões resolvidas: `get` ^4.7.3, `hive_ce` ^2.22.0, `uuid` ^4.6.0 (Etapa 1),
   `path_provider` ^2.1.6. O `hive_ce_flutter` foi dispensado: usamos
   `Hive.init()` com o caminho de D-46. O ambiente verificado tem
   Flutter 3.47.7 e Dart 3.13.5.
@@ -132,6 +132,24 @@ adotado pelo usuário como base para novas regras e campos.
 - **D-23 — Ações da lista de Acompanhamentos:** Registrar contato,
   Adiar, Encerrar sem resposta (com confirmação) e Copiar mensagem,
   esta última disponível só a partir da Etapa 7b.
+
+### Etapa 1 (2026-10-28, aprovação do plano de domínio)
+
+- **D-22b — Entrevista sem contato do tipo Entrevista:** a data
+  sugerida é a data da mudança para Entrevista + 1 dia, mesmo que
+  existam outros contatos depois dela. O prazo padrão só volta a valer
+  quando existe um contato do tipo Entrevista e outro contato depois
+  dele. Isso corrige a inconsistência entre D-22 e a versão anterior
+  da RN-FU-05.
+- **D-25b — Tentativa no mesmo dia da resposta:** não conta. Só contam
+  acompanhamentos com data estritamente posterior à do último evento
+  de resposta.
+- **D-47 — Técnica de domínio:**
+  - `LocalDate` para campos sem hora;
+  - entidades imutáveis;
+  - `uuid` para ids;
+  - erros de validação como códigos, com as mensagens na interface;
+  - código em `features/*/models/`.
 
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
