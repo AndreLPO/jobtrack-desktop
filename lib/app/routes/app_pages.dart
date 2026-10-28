@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../core/database/hive_database.dart';
 import '../../features/applications/models/application_query.dart';
 import '../../features/applications/viewmodels/application_details_controller.dart';
 import '../../features/applications/viewmodels/application_form_controller.dart';
@@ -74,7 +75,14 @@ abstract final class AppPages {
     GetPage(
       name: AppRoutes.settings,
       page: () => const SettingsPage(),
-      binding: BindingsBuilder.put(() => SettingsController()),
+      binding: BindingsBuilder.put(
+        () => SettingsController(
+          Get.find(),
+          dataDirectory: Get.isRegistered<HiveDatabase>()
+              ? Get.find<HiveDatabase>().directory
+              : null,
+        ),
+      ),
     ),
   ];
 }

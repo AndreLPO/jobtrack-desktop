@@ -13,17 +13,22 @@ class HiveDatabase {
   static const applicationsBoxName = 'applications';
   static const settingsBoxName = 'settings';
 
+  String? _directory;
   Box<Map<dynamic, dynamic>>? _applications;
   Box<Map<dynamic, dynamic>>? _settings;
 
   Box<Map<dynamic, dynamic>> get applications => _requireOpen(_applications);
   Box<Map<dynamic, dynamic>> get settings => _requireOpen(_settings);
 
+  /// Pasta onde os dados ficam gravados (D-43), após [open].
+  String? get directory => _directory;
+
   /// [directory] permite usar uma pasta temporária nos testes.
   Future<void> open({String? directory}) async {
     final path = directory ?? await _defaultDirectory();
     await Directory(path).create(recursive: true);
     Hive.init(path);
+    _directory = path;
     _applications = await Hive.openBox<Map<dynamic, dynamic>>(
       applicationsBoxName,
     );

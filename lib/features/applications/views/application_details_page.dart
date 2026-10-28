@@ -8,6 +8,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/formatting/date_format.dart';
 import '../../../core/widgets/feedback.dart';
+import '../../../core/widgets/section_card.dart';
 import '../../../core/widgets/state_views.dart';
 import '../models/application.dart';
 import '../models/interaction.dart';
@@ -194,7 +195,7 @@ class _DetailsBody extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= _twoColumnBreakpoint;
-        final contacts = _Section(
+        final contacts = SectionCard(
           title: 'Contatos',
           action: FilledButton.tonal(
             onPressed: busy ? null : onRegisterContact,
@@ -205,7 +206,7 @@ class _DetailsBody extends StatelessWidget {
             onRemove: busy ? null : onRemoveContact,
           ),
         );
-        final history = _Section(
+        final history = SectionCard(
           title: 'Histórico de status',
           child: _StatusHistory(changes: application.statusHistory),
         );
@@ -232,7 +233,7 @@ class _DetailsBody extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              _Section(
+              SectionCard(
                 title: 'Resumo',
                 child: _InfoGrid(
                   items: {
@@ -302,7 +303,7 @@ class _JobSection extends StatelessWidget {
         d.jobDescription != null;
     if (!hasContent) return const SizedBox.shrink();
 
-    return _Section(
+    return SectionCard(
       title: 'Vaga',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -321,41 +322,6 @@ class _JobSection extends StatelessWidget {
             _JobDescription(text: d.jobDescription!),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.child, this.action});
-
-  final String title;
-  final Widget child;
-  final Widget? action;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                ?action,
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            child,
-          ],
-        ),
       ),
     );
   }
