@@ -13,7 +13,7 @@ enum ApplicationField {
   jobUrl,
 }
 
-enum InteractionField { date, type, summary }
+enum InteractionField { date, type, nextFollowUpAt }
 
 /// Códigos de erro; as mensagens ficam na interface (D-47).
 enum ValidationCode { required, futureDate, invalidUrl, pastDate }
@@ -77,12 +77,12 @@ List<FieldError<ApplicationField>> validateApplicationDraft(
   return errors;
 }
 
-/// Contato: data obrigatória e não futura (D-18), tipo e resumo
-/// obrigatórios.
+/// Contato: data obrigatória e não futura (D-18), tipo obrigatório,
+/// resumo opcional (D-53) e próxima data hoje ou futura (D-54).
 List<FieldError<InteractionField>> validateInteraction({
   required LocalDate? date,
   required InteractionType? type,
-  required String summary,
+  required LocalDate? nextFollowUpAt,
   required LocalDate today,
 }) {
   final errors = <FieldError<InteractionField>>[];
@@ -100,9 +100,12 @@ List<FieldError<InteractionField>> validateInteraction({
       const FieldError(InteractionField.type, ValidationCode.required),
     );
   }
-  if (summary.trim().isEmpty) {
+  if (nextFollowUpAt != null && nextFollowUpAt.isBefore(today)) {
     errors.add(
-      const FieldError(InteractionField.summary, ValidationCode.required),
+      const FieldError(
+        InteractionField.nextFollowUpAt,
+        ValidationCode.pastDate,
+      ),
     );
   }
   return errors;

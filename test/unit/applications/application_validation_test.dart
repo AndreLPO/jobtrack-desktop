@@ -153,39 +153,52 @@ void main() {
         validateInteraction(
           date: today.addDays(1),
           type: InteractionType.call,
-          summary: 'ligação',
+          nextFollowUpAt: null,
           today: today,
         ),
         [const FieldError(InteractionField.date, ValidationCode.futureDate)],
       );
     });
 
-    test('obrigatórios: data, tipo e resumo', () {
+    test('obrigatórios: data e tipo (resumo é opcional, D-53)', () {
       expect(
         validateInteraction(
           date: null,
           type: null,
-          summary: ' ',
+          nextFollowUpAt: null,
           today: today,
         ).map((e) => e.field),
-        [
-          InteractionField.date,
-          InteractionField.type,
-          InteractionField.summary,
-        ],
+        [InteractionField.date, InteractionField.type],
       );
     });
 
-    test('contato de hoje é válido', () {
+    test('D-54: próxima data deve ser hoje ou futura', () {
       expect(
         validateInteraction(
           date: today,
           type: InteractionType.followUpSent,
-          summary: 'mensagem no LinkedIn',
+          nextFollowUpAt: today.addDays(-1),
           today: today,
         ),
-        isEmpty,
+        [
+          const FieldError(
+            InteractionField.nextFollowUpAt,
+            ValidationCode.pastDate,
+          ),
+        ],
       );
+      for (final next in [today, today.addDays(7), null]) {
+        expect(
+          validateInteraction(
+            date: today,
+            type: InteractionType.followUpSent,
+            nextFollowUpAt: next,
+            today: today,
+          ),
+          isEmpty,
+          reason: '$next',
+        );
+      }
     });
   });
 

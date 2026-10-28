@@ -22,3 +22,11 @@ LocalDate? parseDate(String text) {
   }
   return date;
 }
+
+/// Data e hora local: dd/MM/yyyy HH:mm.
+String formatDateTime(DateTime dateTime) {
+  final local = dateTime.toLocal();
+  return '${formatDate(LocalDate.fromDateTime(local))} '
+      '${local.hour.toString().padLeft(2, '0')}:'
+      '${local.minute.toString().padLeft(2, '0')}';
+}

@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../features/applications/viewmodels/application_details_controller.dart';
 import '../../features/applications/viewmodels/application_form_controller.dart';
 import '../../features/applications/viewmodels/applications_controller.dart';
+import '../../features/applications/views/application_details_page.dart';
 import '../../features/applications/views/application_form_page.dart';
 import '../../features/applications/views/applications_page.dart';
 import '../../features/dashboard/viewmodels/dashboard_controller.dart';
@@ -41,6 +43,16 @@ abstract final class AppPages {
         () => ApplicationFormController(
           Get.find(),
           applicationId: Get.parameters['id'],
+        ),
+      ),
+    ),
+    GetPage(
+      name: AppRoutes.applicationDetails,
+      page: () => const ApplicationDetailsPage(),
+      binding: BindingsBuilder.put(
+        () => ApplicationDetailsController(
+          Get.find(),
+          applicationId: Get.parameters['id']!,
         ),
       ),
     ),

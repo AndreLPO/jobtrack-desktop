@@ -219,6 +219,35 @@ void main() {
     });
   });
 
+  test(
+    'D-55: removeInteraction remove só o contato e mantém a data manual',
+    () {
+      final app = created()
+          .registerInteraction(
+            contact(
+              LocalDate(2026, 10, 20),
+              InteractionType.followUpSent,
+              nextFollowUpAt: LocalDate(2026, 11, 3),
+            ),
+            now: now,
+          )
+          .registerInteraction(
+            contact(LocalDate(2026, 10, 21), InteractionType.call),
+            now: now,
+          )
+          .postpone(LocalDate(2026, 11, 9), now: now);
+      final removedId = app.interactions.first.id;
+      final later = now.add(const Duration(hours: 2));
+
+      final result = app.removeInteraction(removedId, now: later);
+
+      expect(result.interactions.map((i) => i.id), [app.interactions.last.id]);
+      expect(result.manualNextFollowUpAt, LocalDate(2026, 11, 9));
+      expect(result.statusHistory, app.statusHistory);
+      expect(result.updatedAt, later);
+    },
+  );
+
   test('listas expostas são imutáveis', () {
     final app = created();
     expect(

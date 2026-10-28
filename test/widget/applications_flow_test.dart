@@ -235,7 +235,9 @@ void main() {
       repository.store['a'] = original;
       await pumpList(tester);
 
-      await tester.tap(find.text('Acme'));
+      await tester.tap(find.byTooltip('Ações'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Editar'));
       await tester.pumpAndSettle();
       expect(find.text('Editar candidatura'), findsOneWidget);
       expect(

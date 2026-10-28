@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jobtrack_desktop/core/time/local_date.dart';
+import 'package:jobtrack_desktop/features/applications/models/interaction.dart';
+import 'package:jobtrack_desktop/features/applications/models/interaction_type.dart';
 import 'package:jobtrack_desktop/features/applications/models/application_status.dart';
 import 'package:jobtrack_desktop/features/applications/repositories/application_mapper.dart';
 
@@ -25,6 +28,23 @@ void main() {
     expect(decoded.details.jobUrl, isNull);
     expect(decoded.details.workMode, isNull);
     expect(decoded.manualNextFollowUpAt, isNull);
+  });
+
+  test('D-53: resumo de contato nulo faz ida e volta', () {
+    final original = minimalApplication().registerInteraction(
+      Interaction(
+        id: 'i1',
+        date: LocalDate(2026, 10, 3),
+        type: InteractionType.thankYouSent,
+        receivedResponse: false,
+      ),
+      now: DateTime(2026, 10, 3, 18),
+    );
+    final decoded = ApplicationMapper.fromMap(
+      ApplicationMapper.toMap(original),
+    );
+    expect(decoded.interactions.single.summary, isNull);
+    expectSameApplication(decoded, original);
   });
 
   test('grava enums pelo nome e o schemaVersion atual', () {

@@ -177,6 +177,22 @@ adotado pelo usuário como base para novas regras e campos.
 - **D-52 — Alterações não salvas:** ao sair do formulário com mudanças,
   o app pergunta "Descartar alterações?".
 
+### Etapa 4 (2026-10-28, aprovação do plano de detalhes)
+
+- **D-19 — `updatedAt`:** qualquer alteração persistida atualiza o
+  campo: dados, status, contatos e data manual.
+- **D-53 — Resumo do contato:** opcional. Tipo e data bastam para
+  contatos simples. O formato gravado continua na `schemaVersion` 1,
+  porque `summary` passa a aceitar `null` e todos os registros
+  existentes continuam válidos, sem migração.
+- **D-54 — Próxima data no contato:** deve ser hoje ou futura, como na
+  ação "Adiar". A data manual editada no formulário continua sem essa
+  validação (ver `specs/domain/tasks.md`).
+- **D-55 — Correção de contatos:** um contato registrado pode ser
+  excluído, com confirmação, mas não editado. Excluir um contato não
+  altera a data manual de próximo acompanhamento. O histórico de status
+  é imutável.
+
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
   recebida e não existe contato posterior, a base é a data da mudança
@@ -214,11 +230,6 @@ adotado pelo usuário como base para novas regras e campos.
 - **Situação:** usa-se provisoriamente a estrutura simples em `specs/`.
   O CLI OpenSpec 1.14.1 está instalado globalmente, mas não foi
   inicializado aqui.
-
-### D-19 — `updatedAt`
-- **Status:** Pendente (N)
-- **Recomendação:** qualquer alteração persistida na candidatura,
-  inclusive contato e mudança de status, atualiza o `updatedAt`.
 
 ### D-42 — Identidade visual
 - **Status:** Pendente (N; tokens provisórios na Etapa 0)

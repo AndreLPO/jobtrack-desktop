@@ -10,6 +10,7 @@ import '../../../core/widgets/feedback.dart';
 import '../../../core/widgets/state_views.dart';
 import '../models/application.dart';
 import '../viewmodels/applications_controller.dart';
+import 'application_details_page.dart';
 import 'labels.dart';
 import 'status_badge.dart';
 
@@ -22,6 +23,16 @@ class ApplicationsPage extends GetView<ApplicationsController> {
     if (saved != true) return;
     await controller.load();
     if (context.mounted) showFeedback(context, 'Candidatura salva.');
+  }
+
+  /// Detalhes (D-51). Ao voltar, recarrega: status e dados podem ter
+  /// mudado.
+  Future<void> _openDetails(BuildContext context, Application app) async {
+    final result = await Get.toNamed(AppRoutes.applicationDetailsPath(app.id));
+    await controller.load();
+    if (result == detailsDeletedResult && context.mounted) {
+      showFeedback(context, 'Candidatura excluída.');
+    }
   }
 
   Future<void> _delete(BuildContext context, Application application) async {
@@ -107,7 +118,8 @@ class ApplicationsPage extends GetView<ApplicationsController> {
         Expanded(
           child: _ApplicationsTable(
             applications: applications,
-            onOpen: (a) =>
+            onOpen: (a) => _openDetails(context, a),
+            onEdit: (a) =>
                 _openForm(context, AppRoutes.editApplicationPath(a.id)),
             onDelete: (a) => _delete(context, a),
           ),
@@ -122,6 +134,7 @@ class _ApplicationsTable extends StatelessWidget {
   const _ApplicationsTable({
     required this.applications,
     required this.onOpen,
+    required this.onEdit,
     required this.onDelete,
   });
 
@@ -129,6 +142,7 @@ class _ApplicationsTable extends StatelessWidget {
 
   final List<Application> applications;
   final ValueChanged<Application> onOpen;
+  final ValueChanged<Application> onEdit;
   final ValueChanged<Application> onDelete;
 
   @override
@@ -154,6 +168,7 @@ class _ApplicationsTable extends StatelessWidget {
                     application: applications[index],
                     showChannel: showChannel,
                     onOpen: onOpen,
+                    onEdit: onEdit,
                     onDelete: onDelete,
                   ),
                 ),
@@ -210,12 +225,14 @@ class _ApplicationRow extends StatelessWidget {
     required this.application,
     required this.showChannel,
     required this.onOpen,
+    required this.onEdit,
     required this.onDelete,
   });
 
   final Application application;
   final bool showChannel;
   final ValueChanged<Application> onOpen;
+  final ValueChanged<Application> onEdit;
   final ValueChanged<Application> onDelete;
 
   @override
@@ -251,7 +268,7 @@ class _ApplicationRow extends StatelessWidget {
                 tooltip: 'Ações',
                 icon: const Icon(Icons.more_vert, size: 20),
                 onSelected: (action) => switch (action) {
-                  _RowAction.edit => onOpen(application),
+                  _RowAction.edit => onEdit(application),
                   _RowAction.delete => onDelete(application),
                 },
                 itemBuilder: (_) => const [

@@ -128,6 +128,18 @@ class Application {
     );
   }
 
+  /// Remove um contato registrado por engano (D-55). A data manual de
+  /// próximo acompanhamento não é alterada.
+  Application removeInteraction(String interactionId, {required DateTime now}) {
+    return _copy(
+      updatedAt: now,
+      interactions: [
+        for (final i in interactions)
+          if (i.id != interactionId) i,
+      ],
+    );
+  }
+
   /// Atualiza os dados descritivos e a data manual, preservando
   /// histórico e contatos (RN-APP-10).
   Application updateDetails(

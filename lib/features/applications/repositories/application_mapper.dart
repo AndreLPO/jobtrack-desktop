@@ -184,7 +184,7 @@ abstract final class ApplicationMapper {
         map['type'],
         'interactions.type',
       ),
-      summary: MapCodec.requireString(map['summary'], 'interactions.summary'),
+      summary: MapCodec.optionalString(map['summary'], 'interactions.summary'),
       receivedResponse: MapCodec.requireBool(
         map['receivedResponse'],
         'interactions.receivedResponse',

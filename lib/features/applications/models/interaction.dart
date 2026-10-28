@@ -7,7 +7,7 @@ class Interaction {
     required this.id,
     required this.date,
     required this.type,
-    required this.summary,
+    this.summary,
     required this.receivedResponse,
     this.nextFollowUpAt,
   });
@@ -17,7 +17,9 @@ class Interaction {
   /// Não pode ser futura (D-18).
   final LocalDate date;
   final InteractionType type;
-  final String summary;
+
+  /// Opcional (D-53).
+  final String? summary;
 
   /// Houve resposta da empresa neste contato (D-11).
   final bool receivedResponse;

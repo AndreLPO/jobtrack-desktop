@@ -2,6 +2,7 @@ import '../models/application_channel.dart';
 import '../models/application_details.dart';
 import '../models/application_status.dart';
 import '../models/application_validation.dart';
+import '../models/interaction_type.dart';
 import '../models/work_mode.dart';
 
 /// Textos em pt-BR dos códigos do domínio (D-06, D-47).
@@ -26,6 +27,17 @@ extension ApplicationChannelLabel on ApplicationChannel {
     ApplicationChannel.email => 'E-mail',
     ApplicationChannel.referral => 'Indicação',
     ApplicationChannel.other => 'Outro',
+  };
+}
+
+extension InteractionTypeLabel on InteractionType {
+  String get label => switch (this) {
+    InteractionType.followUpSent => 'Acompanhamento enviado',
+    InteractionType.messageReceived => 'Mensagem recebida',
+    InteractionType.call => 'Ligação',
+    InteractionType.interview => 'Entrevista',
+    InteractionType.thankYouSent => 'Agradecimento enviado',
+    InteractionType.other => 'Outro',
   };
 }
 
