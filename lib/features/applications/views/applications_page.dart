@@ -8,7 +8,10 @@ import '../../../app/theme/app_spacing.dart';
 import '../../../core/formatting/date_format.dart';
 import '../../../core/widgets/feedback.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../../core/time/local_date.dart';
+import '../../follow_ups/views/follow_up_labels.dart';
 import '../models/application.dart';
+import '../models/follow_up_policy.dart';
 import '../viewmodels/applications_controller.dart';
 import 'application_details_page.dart';
 import 'applications_toolbar.dart';
@@ -140,6 +143,8 @@ class ApplicationsPage extends GetView<ApplicationsController> {
                 )
               : _ApplicationsTable(
                   applications: visible,
+                  followUpOf: controller.followUpOf,
+                  today: controller.today,
                   onOpen: (a) => _openDetails(context, a),
                   onEdit: (a) =>
                       _openForm(context, AppRoutes.editApplicationPath(a.id)),
@@ -191,6 +196,8 @@ class _ResultSummary extends StatelessWidget {
 class _ApplicationsTable extends StatelessWidget {
   const _ApplicationsTable({
     required this.applications,
+    required this.followUpOf,
+    required this.today,
     required this.onOpen,
     required this.onEdit,
     required this.onDelete,
@@ -199,6 +206,8 @@ class _ApplicationsTable extends StatelessWidget {
   static const _channelBreakpoint = 800.0;
 
   final List<Application> applications;
+  final FollowUpState Function(Application) followUpOf;
+  final LocalDate today;
   final ValueChanged<Application> onOpen;
   final ValueChanged<Application> onEdit;
   final ValueChanged<Application> onDelete;
@@ -224,6 +233,8 @@ class _ApplicationsTable extends StatelessWidget {
                   separatorBuilder: (_, _) => const Divider(),
                   itemBuilder: (context, index) => _ApplicationRow(
                     application: applications[index],
+                    followUp: followUpOf(applications[index]),
+                    today: today,
                     showChannel: showChannel,
                     onOpen: onOpen,
                     onEdit: onEdit,
@@ -241,6 +252,7 @@ class _ApplicationsTable extends StatelessWidget {
 
 const _dateWidth = 110.0;
 const _statusWidth = 190.0;
+const _followUpWidth = 170.0;
 const _menuWidth = 48.0;
 
 class _HeaderRow extends StatelessWidget {
@@ -271,6 +283,10 @@ class _HeaderRow extends StatelessWidget {
             width: _statusWidth,
             child: Text('Status', style: style),
           ),
+          SizedBox(
+            width: _followUpWidth,
+            child: Text('Acompanhamento', style: style),
+          ),
           const SizedBox(width: _menuWidth),
         ],
       ),
@@ -281,6 +297,8 @@ class _HeaderRow extends StatelessWidget {
 class _ApplicationRow extends StatelessWidget {
   const _ApplicationRow({
     required this.application,
+    required this.followUp,
+    required this.today,
     required this.showChannel,
     required this.onOpen,
     required this.onEdit,
@@ -288,6 +306,8 @@ class _ApplicationRow extends StatelessWidget {
   });
 
   final Application application;
+  final FollowUpState followUp;
+  final LocalDate today;
   final bool showChannel;
   final ValueChanged<Application> onOpen;
   final ValueChanged<Application> onEdit;
@@ -318,6 +338,13 @@ class _ApplicationRow extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: StatusBadge(status: application.status),
+              ),
+            ),
+            SizedBox(
+              width: _followUpWidth,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FollowUpIndicator(state: followUp, today: today),
               ),
             ),
             SizedBox(

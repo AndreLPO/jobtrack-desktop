@@ -70,7 +70,9 @@ abstract final class AppPages {
     GetPage(
       name: AppRoutes.followUps,
       page: () => const FollowUpsPage(),
-      binding: BindingsBuilder.put(() => FollowUpsController()),
+      binding: BindingsBuilder.put(
+        () => FollowUpsController(Get.find(), Get.find()),
+      ),
     ),
     GetPage(
       name: AppRoutes.settings,
