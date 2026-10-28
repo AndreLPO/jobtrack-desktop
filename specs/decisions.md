@@ -151,6 +151,21 @@ adotado pelo usuário como base para novas regras e campos.
   - erros de validação como códigos, com as mensagens na interface;
   - código em `features/*/models/`.
 
+### Etapa 2 (2026-10-28, aprovação do plano de persistência)
+
+- **D-03 — Formato gravado:** mapas simples com mappers escritos à mão
+  e `schemaVersion` em cada registro. Enums gravados pelo nome,
+  `LocalDate` como `yyyy-MM-dd` e `DateTime` como ISO-8601 em UTC. Sem
+  adapters nem `build_runner`.
+- **D-48 — Registro ilegível:** a listagem mostra os demais registros e
+  avisa quantos não puderam ser lidos. O registro ilegível nunca é
+  apagado nem sobrescrito automaticamente. Configurações ilegíveis
+  usam os padrões, sem gravar por cima até o usuário salvar.
+- **D-49 — Consultas:** o repositório oferece só criar, ler, atualizar
+  e excluir. Filtros por status, canal e período são funções puras do
+  domínio, testadas na Etapa 5. Isso substitui os "testes de consulta
+  no repositório" do PROJECT.md §10.
+
 - **I-3 — Base sem contato após resposta (D-22), confirmada:** quando
   o status muda para Resposta recebida, Teste técnico ou Proposta
   recebida e não existe contato posterior, a base é a data da mudança
@@ -188,13 +203,6 @@ adotado pelo usuário como base para novas regras e campos.
 - **Situação:** usa-se provisoriamente a estrutura simples em `specs/`.
   O CLI OpenSpec 1.14.1 está instalado globalmente, mas não foi
   inicializado aqui.
-
-### D-03 — Adapters Hive: gerados ou manuais
-- **Status:** Pendente (B: Etapa 2)
-- **Opções:** (a) `hive_ce_generator` + `build_runner`; (b) adapters
-  manuais; (c) gravar `Map` com mapper explícito e `schemaVersion`.
-- **Recomendação:** (c) ou (b), para ter controle explícito da
-  evolução de schema. Decidir no `plan.md` da Etapa 2.
 
 ### D-06 — Idioma e formato
 - **Status:** Pendente (N)

@@ -19,7 +19,8 @@ Features iniciais: `dashboard`, `applications`, `follow-ups`,
 técnica (Etapa 0), que não tem regra de negócio e por isso não tem
 `spec.md`. A pasta `domain/` guarda o plano da Etapa 1, que implementa
 regras de várias specs; as regras em si continuam nas specs de cada
-feature.
+feature. A pasta `persistence/` guarda o plano da Etapa 2, pelo mesmo
+motivo.
 
 ## Ciclo de vida de uma spec
 
