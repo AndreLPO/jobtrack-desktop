@@ -90,7 +90,7 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.andre" "\0"
-            VALUE "FileDescription", "jobtrack_desktop" "\0"
+            VALUE "FileDescription", "JobTrack" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "jobtrack_desktop" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.andre. All rights reserved." "\0"
