@@ -10,11 +10,32 @@ sites de vagas.
   e a ação de adiar.
 - **Mensagem de acompanhamento:** um modelo editável para copiar. Nada é
   enviado pelo app.
+- **Quadro:** as candidaturas em colunas por status, para mover
+  arrastando.
 - **Dashboard:** candidaturas da semana, respostas e pendências.
 
 Produto, regras e decisões: [`PROJECT.md`](PROJECT.md) e
 [`specs/`](specs/README.md). Instruções para o Claude Code:
 [`CLAUDE.md`](CLAUDE.md).
+
+## Baixar
+
+**[⬇ JobTrack para Windows (x64)](https://github.com/AndreLPO/jobtrack-desktop/releases/latest/download/JobTrack-windows-x64.zip)**.
+As versões anteriores estão em [Releases](https://github.com/AndreLPO/jobtrack-desktop/releases).
+
+1. Extraia o `.zip` em uma pasta, por exemplo
+   `%LOCALAPPDATA%\Programs\JobTrack`.
+2. Execute `jobtrack_desktop.exe`. Se quiser, crie um atalho para ele
+   na área de trabalho.
+
+O executável não é assinado, então o Windows SmartScreen pode avisar
+na primeira execução. Para abrir mesmo assim, clique em **Mais
+informações → Executar assim mesmo**. Se aparecer um erro de DLL
+ausente (`MSVCP140.dll` ou `VCRUNTIME140.dll`), instale o
+[Visual C++ Redistributable x64](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+da Microsoft.
+
+Requer Windows 10 ou superior.
 
 ## Requisitos
 
